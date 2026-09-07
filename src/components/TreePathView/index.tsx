@@ -98,14 +98,15 @@ export default function TreePathView(props: TreePathViewProps) {
                     />
                 </div>
                 <div className={`absolute translate-x-[-110%] translate-y-[520px] ${doAnimationThirdCircle ? 'fade-dates-path' : 'hidden'}`}>
-                    <FormViewPath 
-                        title='Python Developer'
+                    <FormViewPath
+                        title='Full Stack Developer'
                         subtitle='ANO Software'
                         tag='Professional'
                         desc={[
-                            'Currently involved in an project ERP developed in Python;',
-                            'Carried out various developments that required the application of advanced logic and efficient algorithms;',
-                            'Built Python scripts to maintenance, continuous software optimization and databases migration to improve system efficiency and data integrity;'
+                            'Develop and maintain FutureERP-R3, an enterprise ERP platform built with Python and PostgreSQL;',
+                            'Contribute to FutureERP-R4, a new ERP platform built from scratch with Java, Spring Boot, Hibernate, React and TypeScript;',
+                            'Design and implement authentication with Keycloak and OAuth2, enabling Single Sign-On across both platforms;',
+                            'Build Docker images and Compose configurations and prepare deployments to Linux-based client environments;'
                         ]}
                     />
                 </div>

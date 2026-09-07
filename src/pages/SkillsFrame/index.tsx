@@ -7,9 +7,7 @@ import CSharpImage from '../../assets/Images/Skills/c-sharp.png'
 import SQLImage from '../../assets/Images/Skills/sql.png'
 import GitImage from '../../assets/Images/Skills/git.png'
 import OtherImage from '../../assets/Images/Skills/other.png'
-import NodeJsImage from '../../assets/Images/Skills/nodejs.png'
-import MLImage from '../../assets/Images/Skills/ml.png'
-
+import JavaImage from '../../assets/Images/Skills/java.png'
 
 export default function IndexSkillsFrame(props: InterfaceFrame) {
     const ClickOnGetHome = () => {
@@ -18,22 +16,22 @@ export default function IndexSkillsFrame(props: InterfaceFrame) {
 
     let SkillsData = [
         {
+            skills: 'Java',
+            description: 'Spring Boot, Hibernate and Maven',
+            image: JavaImage,
+            percentage: 0.85,
+        },
+        {
             skills: 'Python',
-            description: 'Django, FastAPI, Pytest e SQLAlchemy, ',
+            description: 'Django, FastAPI, Pytest and SQLAlchemy',
             image: PythonImage,
             percentage: 0.9,
         },
         {
-            skills: 'Machine Learning',
-            description: 'Pytorch, Scikit-Learn, NLTK, Pandas and Numpy',
-            image: MLImage,
-            percentage: 0.70
-        },,
-        {
             skills: 'React',
-            description: 'Typescript, Javascript, TailwindCSS and Vite',
+            description: 'TypeScript, JavaScript, Vite and TailwindCSS',
             image: ReactImage,
-            percentage: 0.70
+            percentage: 0.75
         },
         {
             skills: 'C#',
@@ -42,26 +40,20 @@ export default function IndexSkillsFrame(props: InterfaceFrame) {
             percentage: 0.65
         },
         {
-            skills: 'Node.js',
-            description: 'Typescript, JavaScript, Express.js and Axios',
-            image: NodeJsImage,
-            percentage: 0.65
-        },
-        {
             skills: 'Databases',
-            description: 'SQL, Postgres, SQL Server and Oracle DB',
+            description: 'PostgreSQL, Oracle, SQL Server and Liquibase',
             image: SQLImage,
             percentage: 0.85
         },
         {
             skills: 'Git and Docker',
-            description: 'CI/CD, Docker Images and Compose',
+            description: 'GitLab, CI/CD, Docker Images and Compose',
             image: GitImage,
-            percentage: 0.60
+            percentage: 0.70
         },
         {
             skills: 'Other',
-            description: 'C++, C, Matlab, Three.js, etc',
+            description: 'C++, C, Keycloak/OAuth2, Linux, Three.js, etc',
             image: OtherImage,
             percentage: 0.50
         },
