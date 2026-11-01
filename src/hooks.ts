@@ -1,8 +1,4 @@
 import { useCallback, useEffect, useState } from 'react'
-import type { CSSProperties } from 'react'
-
-/** Staggers `.fade-up`, `.line-rise` and `[data-reveal]` animations. */
-export const delay = (ms: number) => ({ '--d': `${ms}ms` }) as CSSProperties
 
 export function useMediaQuery(query: string) {
   const [matches, setMatches] = useState(() => window.matchMedia(query).matches)
@@ -49,30 +45,6 @@ export function useTheme() {
   return { theme, toggle }
 }
 
-/** Adds `is-visible` to every `[data-reveal]` element once it scrolls into view. */
-export function useReveal() {
-  useEffect(() => {
-    const elements = document.querySelectorAll<HTMLElement>('[data-reveal]')
-    if (!('IntersectionObserver' in window)) {
-      elements.forEach((el) => el.classList.add('is-visible'))
-      return
-    }
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible')
-            observer.unobserve(entry.target)
-          }
-        }
-      },
-      { rootMargin: '0px 0px -8% 0px', threshold: 0.08 },
-    )
-    elements.forEach((el) => observer.observe(el))
-    return () => observer.disconnect()
-  }, [])
-}
-
 export function useActiveSection(ids: readonly string[]) {
   const [active, setActive] = useState<string | null>(null)
 
@@ -93,23 +65,6 @@ export function useActiveSection(ids: readonly string[]) {
   }, [ids])
 
   return active
-}
-
-export function useClock(timeZone: string) {
-  const [now, setNow] = useState(() => new Date())
-
-  useEffect(() => {
-    const timer = window.setInterval(() => setNow(new Date()), 1000)
-    return () => window.clearInterval(timer)
-  }, [])
-
-  return new Intl.DateTimeFormat('en-GB', {
-    timeZone,
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false,
-  }).format(now)
 }
 
 export function useCopy(text: string) {

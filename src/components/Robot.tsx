@@ -21,6 +21,10 @@ interface Props {
 
 const clamp = (n: number) => Math.max(-1, Math.min(1, n))
 
+/** Bit borrows Q.bo's navy and white, with cyan eyes and a coral status light. */
+const EYE = '#7cf4ff'
+const STATUS = '#ff6b57'
+
 /** Bit, a small robot whose eyes follow the cursor. Click it to say hello. */
 export default function Robot({ onScan, scanning, lookAt }: Props) {
   const svgRef = useRef<SVGSVGElement>(null)
@@ -223,14 +227,15 @@ export default function Robot({ onScan, scanning, lookAt }: Props) {
               <stop offset="0.45" stopColor="#dededa" />
               <stop offset="1" stopColor="#a3a39f" />
             </linearGradient>
-            <linearGradient id="bit-metal" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0" stopColor="#c4c4c0" />
-              <stop offset="1" stopColor="#82827e" />
+            <linearGradient id="bit-metal" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stopColor="#5a6fd0" />
+              <stop offset="0.55" stopColor="#3245a0" />
+              <stop offset="1" stopColor="#1b2458" />
             </linearGradient>
             <radialGradient id="bit-visor" cx="0.35" cy="0.3" r="0.9">
-              <stop offset="0" stopColor="#3a3a3a" />
-              <stop offset="0.6" stopColor="#121212" />
-              <stop offset="1" stopColor="#050505" />
+              <stop offset="0" stopColor="#2a3c86" />
+              <stop offset="0.6" stopColor="#0f1748" />
+              <stop offset="1" stopColor="#060a24" />
             </radialGradient>
             <filter id="bit-glow" x="-60%" y="-60%" width="220%" height="220%">
               <feGaussianBlur stdDeviation="3.5" result="blur" />
@@ -261,18 +266,18 @@ export default function Robot({ onScan, scanning, lookAt }: Props) {
               fill="url(#bit-shell)"
             />
             <rect x="94" y="220" width="52" height="32" rx="9" fill="url(#bit-visor)" />
-            <g className="bit-bars" fill="#f4f4f2" opacity="0.85">
+            <g className="bit-bars" fill={EYE} filter="url(#bit-glow)">
               <rect x="106" y="230" width="6" height="14" rx="3" />
               <rect x="117" y="230" width="6" height="14" rx="3" />
               <rect x="128" y="230" width="6" height="14" rx="3" />
             </g>
 
-            <rect x="106" y="180" width="28" height="22" rx="6" fill="#77777a" />
+            <rect x="106" y="180" width="28" height="22" rx="6" fill="url(#bit-metal)" />
 
             {/* Head */}
             <g ref={headRef}>
-              <line x1="120" y1="52" x2="120" y2="28" stroke="#9a9a97" strokeWidth="4" strokeLinecap="round" />
-              <circle className="bit-antenna" cx="120" cy="22" r="7" fill="#ffffff" filter="url(#bit-glow)" />
+              <line x1="120" y1="52" x2="120" y2="28" stroke="#3245a0" strokeWidth="4" strokeLinecap="round" />
+              <circle className="bit-antenna" cx="120" cy="22" r="7" fill={STATUS} filter="url(#bit-glow)" />
               <rect x="20" y="104" width="18" height="44" rx="9" fill="url(#bit-metal)" />
               <rect x="202" y="104" width="18" height="44" rx="9" fill="url(#bit-metal)" />
               <rect x="32" y="50" width="176" height="136" rx="60" fill="url(#bit-shell)" />
@@ -280,23 +285,23 @@ export default function Robot({ onScan, scanning, lookAt }: Props) {
               <ellipse cx="86" cy="86" rx="26" ry="7" fill="#fff" opacity="0.09" transform="rotate(-14 86 86)" />
 
               <g clipPath="url(#bit-visor-clip)">
-                <rect className="bit-visor-scan" x="50" y="76" width="140" height="2" fill="#fff" opacity="0" />
+                <rect className="bit-visor-scan" x="50" y="76" width="140" height="2" fill={EYE} opacity="0" />
               </g>
 
               <g ref={eyesRef} filter="url(#bit-glow)">
                 {happy ? (
-                  <g fill="none" stroke="#f7f7f5" strokeWidth="6" strokeLinecap="round">
+                  <g fill="none" stroke={EYE} strokeWidth="6" strokeLinecap="round">
                     <path d="M80 124 Q92 106 104 124" />
                     <path d="M136 124 Q148 106 160 124" />
                   </g>
                 ) : (
-                  <g fill="#f7f7f5">
+                  <g fill={EYE}>
                     <rect x="80" y="102" width="24" height="34" rx="12" />
                     <rect x="136" y="102" width="24" height="34" rx="12" />
                   </g>
                 )}
               </g>
-              <rect className="bit-mouth" x="108" y="146" width="24" height="4" rx="2" fill="#f7f7f5" opacity="0.55" />
+              <rect className="bit-mouth" x="108" y="146" width="24" height="4" rx="2" fill={EYE} opacity="0.75" />
             </g>
           </g>
         </svg>

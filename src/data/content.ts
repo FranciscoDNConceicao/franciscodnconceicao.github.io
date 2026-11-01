@@ -6,9 +6,6 @@ import gammingHourVideo from '../assets/projects/gamming-hour.mp4'
 
 export const profile = {
   name: 'Francisco Conceição',
-  fullName: 'Francisco Diogo Nunes da Conceição',
-  role: 'Software Engineer',
-  location: 'Paredes, Portugal',
   email: 'franciscodnconceicao@gmail.com',
   github: 'https://github.com/FranciscoDNConceicao',
   linkedin: 'https://linkedin.com/in/franciscoconceicao14/',
@@ -19,102 +16,77 @@ export const profile = {
 
 export const sections = [
   { id: 'about', label: 'About' },
-  { id: 'journey', label: 'Journey' },
+  { id: 'experience', label: 'Experience' },
   { id: 'projects', label: 'Projects' },
   { id: 'skills', label: 'Skills' },
   { id: 'contact', label: 'Contact' },
 ] as const
 
-export type SectionId = (typeof sections)[number]['id']
+export const intro =
+  "I'm a software engineer from Paredes, Portugal. I work at ANO Software in Porto, mostly with Java, Python, PostgreSQL and React."
 
-/** In my own words, from my CV profile and the previous version of this site. */
-export const story = {
-  lead: "Ever since I can remember, I've been fascinated by technology and its potential to solve real-world problems.",
-  paragraphs: [
-    'That fascination led me to study Computer Engineering at UTAD. Today I work as a software engineer in Porto, and the curiosity is exactly the same.',
-    "I thrive on continuous learning. Whether it's experimenting with a new programming language, exploring a framework or working through a tricky algorithm, I enjoy the challenge, and I always want to understand the principles behind the tools I use.",
-  ],
-}
-
-export const drivers = [
-  { title: 'Curiosity', text: 'Understanding how things work underneath, not just how to use them.' },
-  { title: 'Continuous learning', text: 'New languages, new frameworks, new problems. Each one is a chance to get better.' },
-  { title: 'Growth', text: 'Challenging myself to improve, both personally and professionally.' },
+export const about = [
+  "I've always liked figuring out how things work. That's what got me into Computer Engineering at UTAD, and it's still my favourite part of the job: digging into something until I really understand it, and then making it better.",
+  "Since September 2023 I've been at ANO Software, working on two ERP platforms. One is a Python system that clients use every day. The other is a new one we're building from scratch with Java, Spring Boot and React. I built its login (Keycloak, with single sign-on between the two ERPs) and the first version of its React frontend.",
+  "On my own time I like trying things I don't use at work yet: a new language, a framework, or a good algorithm problem.",
 ]
 
-export interface Milestone {
+export const facts = [
+  { label: 'Lives in', value: 'Paredes, Portugal' },
+  { label: 'Works at', value: 'ANO Software, Porto' },
+  { label: 'Studied', value: 'Computer Engineering, UTAD' },
+  { label: 'Speaks', value: 'Portuguese, English' },
+]
+
+export interface Role {
   period: string
   title: string
   place: string
   text?: string
-  tags?: string[]
-  current?: boolean
 }
 
-export const journey: Milestone[] = [
+export const experience: Role[] = [
   {
-    period: '2023 — Now',
+    period: 'Sep 2023 – now',
     title: 'Software Engineer',
-    place: 'ANO Software · Porto',
-    text: 'Building enterprise software end to end, from PostgreSQL to Java, Python and React. Along the way I designed single sign-on with Keycloak and helped build a new platform from scratch.',
-    tags: ['Java', 'Spring Boot', 'Python', 'PostgreSQL', 'React', 'Docker'],
-    current: true,
+    place: 'ANO Software, Porto',
+    text: "I split my time between FutureERP-R3, a Python and PostgreSQL ERP where I add features, fix bugs and look into client tickets, and FutureERP-R4, its replacement in Java 21, Spring Boot and React. On R4 I built the Keycloak login with single sign-on and the first React frontend, and I also write REST APIs, Liquibase migrations and the Docker setup we ship to clients' Linux servers.",
   },
   {
-    period: '2020 — 2023',
+    period: 'Sep 2020 – Jun 2023',
     title: 'Computer Engineering',
     place: 'Universidade de Trás-os-Montes e Alto Douro',
-    text: 'Where I sharpened my skills and found my love for coding, through software development with C, C++, C#, ASP.NET MVC, HTML and CSS.',
-    tags: ['C', 'C++', 'C#', 'ASP.NET MVC', 'HTML', 'CSS'],
+    text: 'Mostly software development: C, C++, C#, ASP.NET MVC, HTML and CSS.',
   },
   {
-    period: '2017 — 2020',
+    period: '2017 – 2020',
     title: 'Secondary school',
     place: 'Escola Secundária de Paredes',
   },
 ]
 
-export interface Project {
-  id: string
-  index: string
-  title: string
-  kind: string
-  description: string
-  stack: string[]
-  link: string
-}
-
 export const projects = {
   stockFinance: {
-    id: 'stock-finance',
-    index: '01',
     title: 'Stock Finance',
-    kind: 'Full-stack web app',
     description:
-      'A trading dashboard for viewing, buying and selling stocks, with company information, a market ticker and news. React and TypeScript on the front end; a Python server with FastAPI and SQLAlchemy over PostgreSQL.',
-    stack: ['React', 'TypeScript', 'Python', 'FastAPI', 'SQLAlchemy', 'PostgreSQL'],
+      'A web app for following, buying and selling stocks, with company info and market news. I wrote the frontend in React and TypeScript and the backend in Python with FastAPI and SQLAlchemy, on top of PostgreSQL.',
+    stack: ['React', 'TypeScript', 'FastAPI', 'SQLAlchemy', 'PostgreSQL'],
     link: 'https://github.com/FranciscoDNConceicao/Stock-Finance',
     image: stockFinanceImage,
   },
   qbo: {
-    id: 'qbo',
-    index: '02',
     title: 'Robot Q.BO',
-    kind: 'Computer vision',
     description:
-      'Taught a Q.bo One robot to detect and recognise people in its field of view, driving the servos in its head to follow them. Recognition uses the LBPH algorithm from OpenCV.',
+      "I programmed a Q.bo One robot to spot people, recognise their faces with OpenCV's LBPH recogniser and turn its head to follow them. Bit, up at the top of this page, is loosely based on it.",
     stack: ['Python', 'OpenCV', 'Linux'],
     link: 'https://github.com/FranciscoDNConceicao/Robot-QBO-using-Face-Recognition',
     image: qboCameraImage,
     robot: qboRobotImage,
   },
   gammingHour: {
-    id: 'gamming-hour',
-    index: '03',
     title: 'The Gamming Hour',
-    kind: 'E-commerce web app',
     description:
-      'A games store where customers browse by console, category and producer, keep a list of preferred categories and review the games they have bought.',
+      "An online games store in C# and ASP.NET MVC. You can browse games by console, category or producer, pick your favourite categories and see what you've bought.",
     stack: ['C#', 'ASP.NET MVC'],
     link: 'https://github.com/FranciscoDNConceicao/TheGammingHour',
     poster: gammingHourPoster,
@@ -122,67 +94,9 @@ export const projects = {
   },
 }
 
-/** Places a skill has been used, so the Skills section can show evidence. */
-export const contexts = [
-  { id: 'ano', label: 'ANO Software', kind: 'Work' },
-  { id: 'stock', label: 'Stock Finance', kind: 'Project' },
-  { id: 'qbo', label: 'Robot Q.BO', kind: 'Project' },
-  { id: 'tgh', label: 'The Gamming Hour', kind: 'Project' },
-  { id: 'site', label: 'This website', kind: 'Project' },
-  { id: 'utad', label: 'UTAD', kind: 'Degree' },
-] as const
-
-export type ContextId = (typeof contexts)[number]['id']
-
-export interface Skill {
-  name: string
-  usedIn: ContextId[]
-}
-
-export const skillGroups: { label: string; skills: Skill[] }[] = [
-  {
-    label: 'Languages',
-    skills: [
-      { name: 'Java', usedIn: ['ano'] },
-      { name: 'Python', usedIn: ['ano', 'stock', 'qbo'] },
-      { name: 'TypeScript', usedIn: ['ano', 'stock', 'site'] },
-      { name: 'C#', usedIn: ['tgh', 'utad'] },
-      { name: 'SQL', usedIn: ['ano', 'stock'] },
-    ],
-  },
-  {
-    label: 'Frameworks',
-    skills: [
-      { name: 'Spring Boot', usedIn: ['ano'] },
-      { name: 'React', usedIn: ['ano', 'stock', 'site'] },
-      { name: 'Vite', usedIn: ['ano', 'site'] },
-      { name: 'HTML', usedIn: ['tgh', 'site', 'utad'] },
-      { name: 'CSS', usedIn: ['tgh', 'site', 'utad'] },
-      { name: 'Maven', usedIn: [] },
-    ],
-  },
-  {
-    label: 'Databases',
-    skills: [
-      { name: 'PostgreSQL', usedIn: ['ano', 'stock'] },
-      { name: 'Oracle', usedIn: [] },
-      { name: 'SQL Server', usedIn: ['utad'] },
-    ],
-  },
-  {
-    label: 'Tools',
-    skills: [
-      { name: 'Docker', usedIn: ['ano'] },
-      { name: 'Git', usedIn: ['site'] },
-      { name: 'GitLab', usedIn: [] },
-      { name: 'Liquibase', usedIn: ['ano'] },
-      { name: 'Linux', usedIn: ['ano', 'qbo'] },
-      { name: 'Keycloak · OAuth2', usedIn: ['ano'] },
-    ],
-  },
-]
-
-export const spokenLanguages = [
-  { name: 'Portuguese', level: 'Native' },
-  { name: 'English', level: 'Professional working' },
+export const skills = [
+  { label: 'Languages', items: ['Java', 'Python', 'TypeScript', 'C#', 'SQL'] },
+  { label: 'Frameworks', items: ['Spring Boot', 'React', 'Vite', 'Maven', 'HTML and CSS'] },
+  { label: 'Databases', items: ['PostgreSQL', 'Oracle', 'SQL Server'] },
+  { label: 'Tools', items: ['Docker', 'Git', 'GitLab', 'Liquibase', 'Keycloak', 'Linux'] },
 ]

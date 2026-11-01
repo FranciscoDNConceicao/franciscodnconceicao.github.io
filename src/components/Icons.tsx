@@ -21,12 +21,6 @@ function Icon({ size = 16, children, ...props }: IconProps) {
   )
 }
 
-export const ArrowUpRight = (p: IconProps) => (
-  <Icon {...p}>
-    <path d="M7 17 17 7M8 7h9v9" />
-  </Icon>
-)
-
 export const ArrowDown = (p: IconProps) => (
   <Icon {...p}>
     <path d="M12 5v14M6 13l6 6 6-6" />
@@ -36,12 +30,6 @@ export const ArrowDown = (p: IconProps) => (
 export const ArrowUp = (p: IconProps) => (
   <Icon {...p}>
     <path d="M12 19V5M6 11l6-6 6 6" />
-  </Icon>
-)
-
-export const ArrowRight = (p: IconProps) => (
-  <Icon {...p}>
-    <path d="M5 12h14M13 6l6 6-6 6" />
   </Icon>
 )
 
@@ -64,13 +52,6 @@ export const Check = (p: IconProps) => (
   </Icon>
 )
 
-export const Mail = (p: IconProps) => (
-  <Icon {...p}>
-    <rect x="3" y="5" width="18" height="14" rx="2.5" />
-    <path d="m4 7 8 6 8-6" />
-  </Icon>
-)
-
 export const Sun = (p: IconProps) => (
   <Icon {...p}>
     <circle cx="12" cy="12" r="4" />
@@ -81,19 +62,6 @@ export const Sun = (p: IconProps) => (
 export const Moon = (p: IconProps) => (
   <Icon {...p}>
     <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5Z" />
-  </Icon>
-)
-
-export const Search = (p: IconProps) => (
-  <Icon {...p}>
-    <circle cx="11" cy="11" r="7" />
-    <path d="m20 20-3.5-3.5" />
-  </Icon>
-)
-
-export const Hash = (p: IconProps) => (
-  <Icon {...p}>
-    <path d="M5 9h14M5 15h14M10 4 8 20M16 4l-2 16" />
   </Icon>
 )
 

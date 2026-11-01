@@ -1,25 +1,40 @@
+import type { ReactNode } from 'react'
 import { profile } from '../data/content'
-import { ArrowUp } from './Icons'
 
+function Cell({ label, children, wide = false }: { label: string; children: ReactNode; wide?: boolean }) {
+  return (
+    <div className={`border-b border-r border-ink/20 px-3 py-2.5 ${wide ? 'col-span-2' : ''}`}>
+      <div className="text-[9.5px] uppercase tracking-[0.1em] text-ink3">{label}</div>
+      <div className="mt-1 text-ink">{children}</div>
+    </div>
+  )
+}
+
+/** The page closes like a technical drawing, with a title block in the bottom-right corner. */
 export default function Footer() {
   return (
-    <footer className="overflow-hidden pt-10">
-      <div className="page flex flex-col gap-4 border-t hairline py-8 text-[13px] text-ink3 sm:flex-row sm:items-center sm:justify-between">
-        <span>
-          © {new Date().getFullYear()} {profile.name}
-        </span>
-        <span>Designed and built with React, TypeScript, Vite and Tailwind.</span>
-        <a href="#top" className="group inline-flex items-center gap-1.5 text-ink2 transition hover:text-ink">
-          Back to top
-          <ArrowUp size={14} className="transition-transform duration-300 group-hover:-translate-y-0.5" />
-        </a>
-      </div>
-      <div
-        aria-hidden="true"
-        className="page select-none whitespace-nowrap pb-3 text-[clamp(2rem,8.4vw,7.6rem)] font-semibold leading-[0.85] tracking-[-0.06em] text-ink/[0.06]"
-      >
-        Francisco{' '}
-        <span className="text-silver font-serif font-normal italic tracking-[-0.03em] opacity-30">Conceição</span>
+    <footer className="pb-14 pt-8">
+      <div className="page">
+        <div className="ml-auto grid max-w-[42rem] grid-cols-2 border-l border-t border-ink/20 bg-bg font-mono text-[12px] sm:grid-cols-4">
+          <Cell label="Title" wide>
+            {profile.name}
+            <span className="block text-ink2">Software engineer</span>
+          </Cell>
+          <Cell label="Location">Paredes, PT</Cell>
+          <Cell label="Date">© {new Date().getFullYear()}</Cell>
+          <Cell label="Scale">1:1</Cell>
+          <Cell label="Sheet">1 of 1</Cell>
+          <Cell label="Source">
+            <a href={profile.repo} target="_blank" rel="noopener" className="text-link">
+              GitHub
+            </a>
+          </Cell>
+          <Cell label="Return">
+            <a href="#top" className="text-link">
+              Back to top
+            </a>
+          </Cell>
+        </div>
       </div>
     </footer>
   )

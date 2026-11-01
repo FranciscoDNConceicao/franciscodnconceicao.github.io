@@ -16,9 +16,9 @@ export default {
         'on-accent': token('on-accent'),
       },
       fontFamily: {
-        sans: ['Geist', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        serif: ['"Instrument Serif"', 'ui-serif', 'Georgia', 'serif'],
-        mono: ['"Geist Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+        sans: ['"IBM Plex Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        mono: ['"IBM Plex Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
+        hand: ['Caveat', 'cursive'],
       },
       maxWidth: {
         page: '78rem',
