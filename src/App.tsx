@@ -1,128 +1,75 @@
-import euImage from "/eu.png"
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlay } from '@fortawesome/free-solid-svg-icons';
-import { useState } from "react";
-import IndexSkillsFrame from "./pages/SkillsFrame";
-import PathFrame from "./pages/PathFrame";
-import ContactCVFrame from "./pages/ContactCVFrame";
-import ProjectsFrame from "./pages/ProjectsFrame";
-import { TypeAnimation } from "react-type-animation";
+import { useCallback, useEffect, useState } from 'react'
+import About from './components/About'
+import CommandPalette from './components/CommandPalette'
+import Contact from './components/Contact'
+import Journey from './components/Journey'
+import Footer from './components/Footer'
+import Hero from './components/Hero'
+import { Check } from './components/Icons'
+import Nav from './components/Nav'
+import Projects from './components/Projects'
+import Skills from './components/Skills'
+import { profile } from './data/content'
+import { useCopy, useReveal, useTheme } from './hooks'
 
-function App() {
+export default function App() {
+  const { theme, toggle } = useTheme()
+  const [paletteOpen, setPaletteOpen] = useState(false)
+  const { copied, copy } = useCopy(profile.email)
 
-  const [isVisibleSkillsComponent, setIsVisibleSkillsComponet] = useState(false);
-  const [isVisibleSkillsComponentBack, setIsVisibleSkillsComponetBack] = useState(false);
+  useReveal()
 
-  const [isVisibleProjectsComponent, setIsVisibleProjectsComponet] = useState(false);
-  const [isVisibleProjectsComponentBack, setIsVisibleProjectsComponetBack] = useState(false);
-
-  const [isVisiblePathComponent, setIsVisiblePathComponet] = useState(false);
-  const [isVisiblePathComponentBack, setIsVisiblePathComponetBack] = useState(false);
-
-  const [isVisibleContactCVComponent, setIsVisibleContactCVComponet] = useState(false);
-  const [isVisibleContactComponentBack, setIsVisibleContactCVComponetBack] = useState(false);
-
-  const ClickOnSkillsFrame = () => {
-    setIsVisibleSkillsComponet(true)
-    setIsVisibleSkillsComponetBack(false);
-    
-  }
-  const ClickOnProjectsFrame = () => {
-    setIsVisibleProjectsComponet(true)
-    setIsVisibleProjectsComponetBack(false);
-  }
-  const ClickOnPathFrame = () => {
-    setIsVisiblePathComponet(true)
-    setIsVisiblePathComponetBack(false)
-  }
-  const ClickOnCVContactFrame = () => {
-    setIsVisibleContactCVComponet(true)
-    setIsVisibleContactCVComponetBack(false)
-  }
-
-
-  const goBackSkills = (param:string) => {
-    if(param == 'left'){
-      setIsVisibleSkillsComponetBack(true);
-      setIsVisibleSkillsComponet(false);
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault()
+        setPaletteOpen((open) => !open)
+      }
     }
-    if(param == "up"){
-      setIsVisiblePathComponetBack(true);
-      setIsVisiblePathComponet(false);
-    }
-    if(param == "down"){
-      setIsVisibleProjectsComponetBack(true);
-      setIsVisibleProjectsComponet(false);
-    }
-    if(param == "right"){
-      setIsVisibleContactCVComponetBack(true);
-      setIsVisibleContactCVComponet(false);
-    }
-    
-  }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
+
+  const closePalette = useCallback(() => setPaletteOpen(false), [])
+  const openPalette = useCallback(() => setPaletteOpen(true), [])
 
   return (
-    <div className="h-full w-full background-image flex justify-center">
-      <div className={`absolute ${isVisibleSkillsComponentBack ? 'fade-out-left' : ''}
-                        ${isVisibleSkillsComponent ? 'fade-in-left' : `${!isVisibleSkillsComponentBack ? 'translate-x-[-100%]' : ''}`} z-10`}>
-        {<IndexSkillsFrame goBack={goBackSkills} visible={isVisibleSkillsComponent}/>}
+    <>
+      <a
+        href="#main"
+        className="fixed left-4 top-3 z-[80] -translate-y-20 rounded-full bg-accent px-4 py-2 text-sm font-medium text-on-accent focus:translate-y-0"
+      >
+        Skip to content
+      </a>
+      <div className="grain" aria-hidden="true" />
+      <Nav theme={theme} onToggleTheme={toggle} onOpenPalette={openPalette} />
+      <div className="lg:pl-[5.5rem]">
+        <main id="main">
+          <Hero />
+          <About />
+          <Journey />
+          <Projects />
+          <Skills />
+          <Contact />
+        </main>
+        <Footer />
       </div>
-      <div className={`absolute ${isVisibleProjectsComponentBack ? 'absolute fade-out-top' : 'absolute'}
-                        ${isVisibleProjectsComponent ? 'absolute fade-in-top' : `${!isVisibleProjectsComponentBack ? ' translate-x-[-100%]' : ''}`} z-10`}>
-        {<ProjectsFrame goBack={goBackSkills}/>}
+      <CommandPalette
+        open={paletteOpen}
+        onClose={closePalette}
+        theme={theme}
+        onToggleTheme={toggle}
+        onCopyEmail={copy}
+      />
+      <div
+        role="status"
+        className={`pointer-events-none fixed bottom-6 left-1/2 z-[75] flex -translate-x-1/2 items-center gap-2 rounded-full bg-ink px-4 py-2.5 text-[13.5px] font-medium text-bg shadow-2xl transition duration-500 ease-out ${
+          copied ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+        }`}
+      >
+        <Check size={15} />
+        Email copied to clipboard
       </div>
-      <div className={`absolute ${isVisiblePathComponentBack ? 'fade-out-bot' : ''}
-                        ${isVisiblePathComponent ? 'fade-in-bot' : `${!isVisiblePathComponentBack ? 'translate-x-[-100%]' : ''}`} z-10`}>
-        {<PathFrame goBack={goBackSkills} visible={isVisiblePathComponent}/>}
-      </div>
-      <div className={`absolute ${isVisibleContactComponentBack ? 'fade-out-right' : ''}
-                        ${isVisibleContactCVComponent ? 'fade-in-right' : `${!isVisibleContactComponentBack ? 'translate-x-[-100%]' : ''}`} z-10`}>
-        {<ContactCVFrame goBack={goBackSkills}/>}
-      </div>
-      <div className="absolute h-screen w-screen flex justify-screen items-start z-0 ">
-        <div className="flex flex-col w-[130px] h-[95px] absolute top-0 left-1/2 transform -translate-x-1/2 text-third justify-center items-center max-[1000px]:w-[70px] max-[1000px]:h-[50px]" onClick={ClickOnPathFrame}>
-          <FontAwesomeIcon icon={faPlay} className="cursor-pointer w-[50px] h-[35px] rotate-[270deg] text-[#D9D9D9] max-[1000px]:w-[20px] max-[1000px]:h-[20px]"/>
-          <div className="mont-real-font text-[16px] m-[5px] max-[1000px]:text-[10px]">My journey</div>
-        </div>
-        <div className="flex flex-col w-[130px] h-[95px] absolute bottom-0 left-1/2 transform -translate-x-1/2 text-third justify-center items-center max-[1000px]:w-[70px] max-[1000px]:h-[50px]" onClick={ClickOnProjectsFrame}>  
-          <div className="mont-real-font text-[16px] m-[5px] max-[1000px]:text-[10px]">Projects</div>
-          <FontAwesomeIcon icon={faPlay} className="cursor-pointer w-[50px] h-[35px] rotate-[90deg] text-[#D9D9D9] max-[1000px]:w-[20px] max-[1000px]:h-[20px]"/>
-        </div>
-        <div className="flex flex-col w-[130px] h-[95px] absolute right-0 top-1/2 transform -translate-y-1/2 text-third justify-center items-center rotate-[270deg] max-[1000px]:w-[70px] max-[1000px]:h-[50px]" onClick={ClickOnCVContactFrame}>  
-          <div className="mont-real-font text-[16px] m-[5px] max-[1000px]:text-[10px]">Contact & CV</div>
-          <FontAwesomeIcon icon={faPlay} className="cursor-pointer w-[50px] h-[35px] rotate-[90deg] text-[#D9D9D9] max-[1000px]:w-[20px] max-[1000px]:h-[20px]"/>
-        </div>
-        <div className="flex flex-col w-[130px] h-[95px] absolute left-0 top-1/2 transform -translate-y-1/2 text-third justify-center items-center rotate-[90deg] max-[1000px]:w-[70px] max-[1000px]:h-[50px]" onClick={ClickOnSkillsFrame}>  
-          <div className="mont-real-font text-[16px] m-[5px] max-[1000px]:text-[10px]">Skills</div>
-          <FontAwesomeIcon icon={faPlay} className="cursor-pointer w-[50px] h-[35px] rotate-[90deg] text-[#D9D9D9] max-[1000px]:w-[20px] max-[1000px]:h-[20px]"/>
-        </div>
-      </div>
-      <div className="flex flex-row items-center">
-        <div className="flex w-[40%] justify-end max-[1000px]:hidden">
-          <img className="img-me rounded-[60%] mr-[30px] border-[2px] border-black" src={euImage}/>
-        </div>
-        <div className="max-[1000px]:m-[100px]">
-          
-          <div className="mont-real-font bolder text-[50px] text-third max-[1000px]:text-[25px]">
-            <TypeAnimation
-              sequence={[
-                'Hi!', 
-                2000,
-                'Hi! Welcome to my website!!'
-              ]}
-              wrapper="span"
-            />
-          
-          </div>
-          <div className="w-[90%] roboto-condensed-font text-[25px] text-third max-[1000px]:text-[14px]">
-              I'm Francisco Conceição, a passionate software developer with a passion for creating innovative and efficient software solutions.
-              <br/>
-              Browse through my portfolio to see my lastest projects and more about my academic and professional journey. 
-          </div>
-        </div>
-      </div>
-    </div>
+    </>
   )
 }
-
-export default App
