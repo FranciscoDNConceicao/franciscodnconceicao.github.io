@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { intro, profile } from '../data/content'
 import { useReducedMotion } from '../hooks'
-import BitBlueprint from './BitBlueprint'
+import ArmBlueprint from './ArmBlueprint'
 import { ArrowDown } from './Icons'
 import Robot from './Robot'
 
@@ -110,7 +110,7 @@ export default function Hero() {
         </div>
 
         <figure className="relative mb-14 w-[min(14rem,58vw)] lg:w-[15rem] xl:w-[17rem]">
-          <BitBlueprint className="pointer-events-none absolute -left-[112%] -top-[18%] -z-10 hidden w-[165%] text-ink/[0.22] lg:block" />
+          <ArmBlueprint className="pointer-events-none absolute -left-[104%] -top-[6%] -z-10 hidden w-[175%] text-ink/[0.22] lg:block" />
           <div
             ref={portraitRef}
             className="arch relative bg-ink/20 p-px shadow-[0_40px_90px_-35px_rgba(0,0,0,0.75)]"
@@ -139,14 +139,14 @@ export default function Hero() {
                 <span className="corner right-0 top-0 rounded-tr-lg border-r-2 border-t-2" />
                 <span className="corner bottom-0 left-0 rounded-bl-lg border-b-2 border-l-2" />
                 <span className="corner bottom-0 right-0 rounded-br-lg border-b-2 border-r-2" />
-                <span className="absolute -top-2 left-1/2 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded-md bg-black/65 px-2 py-1 font-mono text-[9.5px] uppercase tracking-[0.08em] text-white backdrop-blur-sm sm:text-[10.5px]">
-                  Francisco Conceição · 98.6%
+                <span className="absolute -top-2 left-1/2 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded-md bg-black/65 px-2 py-1 font-mono text-[9px] uppercase tracking-[0.06em] text-white backdrop-blur-sm sm:text-[10.5px] sm:tracking-[0.08em]">
+                  Francisco · 98.6%
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="absolute -right-[46%] bottom-[-3%] z-10 aspect-[4/5] w-[62%] lg:-left-[18%] lg:right-auto lg:w-[48%] xl:-left-[20%] xl:w-[54%] min-[1360px]:-left-[42%] min-[1360px]:w-[60%]">
+          <div className="absolute -right-[58%] bottom-[-3%] z-10 aspect-[13/15] w-[80%] lg:-left-[18%] lg:right-auto lg:w-[48%] xl:-left-[20%] xl:w-[54%] min-[1360px]:-left-[42%] min-[1360px]:w-[60%]">
             <Robot onScan={startScan} scanning={scan === 'scanning'} lookAt={portraitRef} />
           </div>
 

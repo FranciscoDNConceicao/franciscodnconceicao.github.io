@@ -3,8 +3,13 @@
 Personal website of **Francisco Conceição**, Software Engineer.
 Live at <https://franciscodnconceicao.github.io/>.
 
-Built with React, TypeScript, Vite and Tailwind CSS. No UI or animation libraries: Bit the
-robot, the face scan, the command menu (`⌘K` / `Ctrl K`) and the icons are hand-written.
+Built with React, TypeScript, Vite and Tailwind CSS, with no UI or animation libraries. Some of
+the hand-written parts:
+
+- **Bit**, a two-joint robot arm that follows the cursor using inverse kinematics
+  ([`src/components/Robot.tsx`](src/components/Robot.tsx)).
+- **Query my CV**, a psql-style console over a tiny read-only SQL engine that runs in the browser
+  ([`src/lib/sql.ts`](src/lib/sql.ts), data in [`src/data/database.ts`](src/data/database.ts)).
 
 ## Run locally
 
@@ -18,7 +23,7 @@ npm run lint
 ## Updating content
 
 Almost everything you read on the site lives in [`src/data/content.ts`](src/data/content.ts):
-profile links, the About story, the Journey timeline, projects and skills (including where each skill was used).
+profile links, the About text, experience, projects and skills. The SQL console builds its tables from the same data.
 
 To publish a new CV, replace `public/Francisco-Conceicao-CV.pdf` and keep the same file name.
 

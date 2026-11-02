@@ -6,38 +6,71 @@ import { useReducedMotion } from '../hooks'
 const LINES = [
   "I'm Bit. Francisco taught my cousin Q.bo to recognise faces.",
   'Running a face scan…',
-  'Beep boop. That tickles.',
+  'Two joints, a bit of trigonometry, and I can follow your cursor.',
   "Scroll down, there's more about him.",
 ]
 
 interface Props {
   /** Starts the face scan on the portrait. */
   onScan: () => void
-  /** True while the portrait is being scanned; Bit looks at it. */
+  /** True while the portrait is being scanned; Bit points its camera at it. */
   scanning: boolean
   /** The element Bit looks at while scanning. */
   lookAt: RefObject<HTMLElement>
 }
 
-const clamp = (n: number) => Math.max(-1, Math.min(1, n))
+type Point = { x: number; y: number }
 
-/** Bit borrows Q.bo's navy and white, with cyan eyes and a coral status light. */
-const EYE = '#7cf4ff'
-const STATUS = '#ff6b57'
+// Arm geometry, in SVG units (viewBox 260 × 300).
+const SHOULDER: Point = { x: 130, y: 222 }
+const UPPER = 100
+const FORE = 86
+const LENS = '#7cf4ff'
+const ORANGE_LIGHT = '#ff9a3c'
+const ORANGE = '#f26b0f'
+const STEEL = '#26262a'
+const DEG = 180 / Math.PI
 
-/** Bit, a small robot whose eyes follow the cursor. Click it to say hello. */
+/**
+ * Two-link inverse kinematics: the shoulder and elbow angles that put the wrist on `target`
+ * (or as close as the arm can reach), always choosing the elbow-up solution.
+ */
+function solve(target: Point) {
+  const dx = target.x - SHOULDER.x
+  const dy = target.y - SHOULDER.y
+  const aim = Math.atan2(dy, dx)
+  const dist = Math.min(UPPER + FORE - 3, Math.max(Math.abs(UPPER - FORE) + 12, Math.hypot(dx, dy)))
+  const bend = Math.acos(Math.min(1, Math.max(-1, (UPPER ** 2 + dist ** 2 - FORE ** 2) / (2 * UPPER * dist))))
+  const elbowFor = (angle: number) => ({
+    x: SHOULDER.x + UPPER * Math.cos(angle),
+    y: SHOULDER.y + UPPER * Math.sin(angle),
+  })
+  // In SVG coordinates "up" is a smaller y, so keep whichever elbow sits higher.
+  const shoulder = elbowFor(aim - bend).y <= elbowFor(aim + bend).y ? aim - bend : aim + bend
+  const elbow = elbowFor(shoulder)
+  const reach = { x: SHOULDER.x + dist * Math.cos(aim), y: SHOULDER.y + dist * Math.sin(aim) }
+  const forearm = Math.atan2(reach.y - elbow.y, reach.x - elbow.x)
+  const wrist = { x: elbow.x + FORE * Math.cos(forearm), y: elbow.y + FORE * Math.sin(forearm) }
+  return { shoulder, elbow, forearm, wrist }
+}
+
+/** Bit, an industrial robot arm whose camera follows the cursor. Click it to say hello. */
 export default function Robot({ onScan, scanning, lookAt }: Props) {
   const svgRef = useRef<SVGSVGElement>(null)
+  const upperRef = useRef<SVGGElement>(null)
+  const foreRef = useRef<SVGGElement>(null)
+  const elbowRef = useRef<SVGGElement>(null)
   const headRef = useRef<SVGGElement>(null)
-  const eyesRef = useRef<SVGGElement>(null)
+  const lensRef = useRef<SVGCircleElement>(null)
+  const beamRef = useRef<SVGPolygonElement>(null)
+  const beamGradientRef = useRef<SVGLinearGradientElement>(null)
   const reducedMotion = useReducedMotion()
   const [text, setText] = useState('')
   const [talking, setTalking] = useState(false)
-  const [happy, setHappy] = useState(false)
-  const [waving, setWaving] = useState(false)
   const lineIndex = useRef(0)
   const timers = useRef<number[]>([])
   const hideTimer = useRef(0)
+  const wiggleUntil = useRef(0)
   const scanningRef = useRef(scanning)
   const onScanRef = useRef(onScan)
 
@@ -82,86 +115,113 @@ export default function Robot({ onScan, scanning, lookAt }: Props) {
     lineIndex.current += 1
     say(line, line.length > 32 ? 3800 : 2400)
     if (line.startsWith('Running')) onScanRef.current()
-    setHappy(true)
-    setWaving(true)
-    later(() => setHappy(false), 1300)
-    later(() => setWaving(false), 1600)
+    wiggleUntil.current = performance.now() + 900
   }
 
-  // Eyes and head follow the cursor (or wander when it is idle), with natural blinks.
+  // Drive the joints every frame towards the cursor, the portrait (while scanning) or an idle path.
   useEffect(() => {
     const svg = svgRef.current
+    const upper = upperRef.current
+    const fore = foreRef.current
+    const elbowCap = elbowRef.current
     const head = headRef.current
-    const eyes = eyesRef.current
-    if (!svg || !head || !eyes) return
+    const lens = lensRef.current
+    const beam = beamRef.current
+    const beamGradient = beamGradientRef.current
+    if (!svg || !upper || !fore || !elbowCap || !head || !lens || !beam || !beamGradient) return
 
-    const apply = (x: number, y: number, lid: number) => {
-      head.setAttribute('transform', `translate(${x * 5} ${y * 3}) rotate(${x * 7} 120 186)`)
-      eyes.setAttribute('transform', `translate(${x * 14} ${y * 10}) translate(0 119) scale(1 ${lid}) translate(0 -119)`)
+    const toSvg = (x: number, y: number): Point | null => {
+      const matrix = svg.getScreenCTM()
+      if (!matrix) return null
+      const p = new DOMPoint(x, y).matrixTransform(matrix.inverse())
+      return { x: p.x, y: p.y }
+    }
+    const portraitTarget = (): Point | null => {
+      const rect = lookAt.current?.getBoundingClientRect()
+      return rect ? toSvg(rect.left + rect.width * 0.48, rect.top + rect.height * 0.55) : null
     }
 
+    const pose = (target: Point, aim: Point, now: number) => {
+      const { shoulder, elbow, forearm, wrist } = solve(target)
+      let camera = Math.hypot(aim.x - wrist.x, aim.y - wrist.y) > 10 ? Math.atan2(aim.y - wrist.y, aim.x - wrist.x) : forearm
+      // A real wrist only bends so far.
+      const relative = Math.atan2(Math.sin(camera - forearm), Math.cos(camera - forearm))
+      camera = forearm + Math.max(-1.2, Math.min(1.2, relative))
+      if (now < wiggleUntil.current) camera += Math.sin(now / 45) * 0.35
+
+      upper.setAttribute('transform', `translate(${SHOULDER.x} ${SHOULDER.y}) rotate(${shoulder * DEG})`)
+      fore.setAttribute('transform', `translate(${elbow.x} ${elbow.y}) rotate(${forearm * DEG})`)
+      elbowCap.setAttribute('transform', `translate(${elbow.x} ${elbow.y})`)
+      head.setAttribute('transform', `translate(${wrist.x} ${wrist.y}) rotate(${camera * DEG})`)
+
+      // The scan beam runs from the lens to the face.
+      const lensX = wrist.x + Math.cos(camera) * 38
+      const lensY = wrist.y + Math.sin(camera) * 38
+      const nx = -Math.sin(camera)
+      const ny = Math.cos(camera)
+      const length = Math.max(40, Math.hypot(aim.x - lensX, aim.y - lensY))
+      const endX = lensX + Math.cos(camera) * length
+      const endY = lensY + Math.sin(camera) * length
+      const spread = length * 0.32
+      beam.setAttribute(
+        'points',
+        `${lensX + nx * 3},${lensY + ny * 3} ${lensX - nx * 3},${lensY - ny * 3} ${endX - nx * spread},${endY - ny * spread} ${endX + nx * spread},${endY + ny * spread}`,
+      )
+      beamGradient.setAttribute('x1', String(lensX))
+      beamGradient.setAttribute('y1', String(lensY))
+      beamGradient.setAttribute('x2', String(endX))
+      beamGradient.setAttribute('y2', String(endY))
+    }
+
+    const rest: Point = { x: 196, y: 120 }
     if (reducedMotion) {
-      apply(0.45, 0, 1)
+      pose(rest, portraitTarget() ?? rest, 0)
       return
     }
 
     let frame = 0
     let visible = true
     let last = performance.now()
-    let lookX = 0
-    let lookY = 0
-    let targetX = 0.45
-    let targetY = 0
+    let time = 0
     let lastPointer = -Infinity
-    let nextWander = 0
-    let blinkAt = performance.now() + 1600
-    let blinkStart = -1
-    let doubled = false
-
-    const aimAt = (x: number, y: number) => {
-      const rect = svg.getBoundingClientRect()
-      targetX = clamp((x - (rect.left + rect.width / 2)) / 320)
-      targetY = clamp((y - (rect.top + rect.height * 0.4)) / 260)
-    }
-    const aimAtPortrait = () => {
-      const rect = lookAt.current?.getBoundingClientRect()
-      if (rect) aimAt(rect.left + rect.width / 2, rect.top + rect.height * 0.45)
-    }
+    let pointer: Point = rest
+    let target: Point = { ...rest }
+    let aim: Point = { ...rest }
+    let blinkAt = performance.now() + 2500
 
     const tick = (now: number) => {
       frame = 0
       const dt = Math.min(0.05, (now - last) / 1000)
       last = now
+      time += dt
 
+      let goal: Point
       if (scanningRef.current) {
-        aimAtPortrait()
-      } else if (now - lastPointer > 3500 && now > nextWander) {
-        nextWander = now + 2000 + Math.random() * 2400
-        if (Math.random() < 0.35) aimAtPortrait()
-        else {
-          targetX = (Math.random() * 2 - 1) * 0.8
-          targetY = (Math.random() * 2 - 1) * 0.45
-        }
+        goal = portraitTarget() ?? rest
+      } else if (now - lastPointer < 3500) {
+        goal = pointer
+      } else {
+        // Idle: trace a slow figure of eight above the base.
+        goal = { x: 140 + Math.sin(time * 0.45) * 70, y: 105 + Math.sin(time * 0.9) * 32 }
       }
+      // Never reach into the floor.
+      goal = { x: goal.x, y: Math.min(goal.y, SHOULDER.y + 6) }
 
-      const ease = 1 - Math.pow(0.0006, dt)
-      lookX += (targetX - lookX) * ease
-      lookY += (targetY - lookY) * ease
+      const ease = 1 - Math.pow(0.002, dt)
+      aim = { x: aim.x + (goal.x - aim.x) * ease, y: aim.y + (goal.y - aim.y) * ease }
+      const armEase = 1 - Math.pow(0.008, dt)
+      target = { x: target.x + (aim.x - target.x) * armEase, y: target.y + (aim.y - target.y) * armEase }
+      pose(target, aim, now)
 
-      let lid = 1
-      if (blinkStart < 0 && now >= blinkAt) blinkStart = now
-      if (blinkStart >= 0) {
-        const t = (now - blinkStart) / 150
-        if (t >= 1) {
-          blinkStart = -1
-          doubled = !doubled && Math.random() < 0.2
-          blinkAt = now + (doubled ? 120 : 2400 + Math.random() * 3600)
-        } else {
-          lid = Math.max(0.08, Math.abs(1 - 2 * t))
-        }
+      // The lens closes for a moment now and then, like a camera shutter.
+      let radius = 6
+      if (now > blinkAt) {
+        const t = (now - blinkAt) / 180
+        if (t >= 1) blinkAt = now + 2600 + Math.random() * 3600
+        else radius = 6 * Math.max(0.15, Math.abs(1 - 2 * t))
       }
+      lens.setAttribute('r', radius.toFixed(2))
 
-      apply(lookX, lookY, lid)
       schedule()
     }
 
@@ -170,8 +230,10 @@ export default function Robot({ onScan, scanning, lookAt }: Props) {
     }
     const onPointer = (event: PointerEvent) => {
       if (event.pointerType !== 'mouse') return
+      const p = toSvg(event.clientX, event.clientY)
+      if (!p) return
+      pointer = p
       lastPointer = performance.now()
-      if (!scanningRef.current) aimAt(event.clientX, event.clientY)
     }
     const observer = new IntersectionObserver(([entry]) => {
       visible = entry.isIntersecting
@@ -179,6 +241,7 @@ export default function Robot({ onScan, scanning, lookAt }: Props) {
     })
     const onVisibility = () => schedule()
 
+    pose(rest, rest, 0)
     observer.observe(svg)
     window.addEventListener('pointermove', onPointer, { passive: true })
     document.addEventListener('visibilitychange', onVisibility)
@@ -197,11 +260,11 @@ export default function Robot({ onScan, scanning, lookAt }: Props) {
       <div
         role="status"
         aria-live="polite"
-        className={`pointer-events-none absolute bottom-[90%] left-1/2 z-20 w-max max-w-[14rem] -translate-x-1/2 transition duration-300 ease-out ${
+        className={`pointer-events-none absolute bottom-[96%] left-1/2 z-20 w-max max-w-[14rem] -translate-x-1/2 transition duration-300 ease-out ${
           talking ? 'translate-y-0 opacity-100' : 'translate-y-2 opacity-0'
         }`}
       >
-        <p className="rounded-2xl bg-ink px-3.5 py-2 text-center text-[13px] font-medium leading-snug text-bg shadow-[0_18px_40px_-18px_rgba(0,0,0,0.6)]">
+        <p className="rounded-lg bg-ink px-3.5 py-2 text-center text-[13px] font-medium leading-snug text-bg shadow-[0_18px_40px_-18px_rgba(0,0,0,0.6)]">
           {text}
         </p>
         <span className="mx-auto block h-2.5 w-2.5 -translate-y-1.5 rotate-45 bg-ink" />
@@ -210,99 +273,83 @@ export default function Robot({ onScan, scanning, lookAt }: Props) {
       <button
         type="button"
         onClick={poke}
-        aria-label="Say hello to Bit, the robot"
-        className="block h-full w-full cursor-pointer rounded-3xl"
+        aria-label="Say hello to Bit, the robot arm"
+        className="block h-full w-full cursor-pointer rounded-2xl"
       >
         <svg
           ref={svgRef}
-          viewBox="0 0 240 300"
-          className={`bit h-full w-full overflow-visible ${talking ? 'bit-talking' : ''} ${waving ? 'bit-waving' : ''} ${
-            scanning ? 'bit-scanning' : ''
-          }`}
+          viewBox="0 0 260 300"
+          className={`arm h-full w-full overflow-visible ${talking ? 'arm-talking' : ''}`}
           aria-hidden="true"
         >
           <defs>
-            <linearGradient id="bit-shell" x1="0.2" y1="0" x2="0.8" y2="1">
-              <stop offset="0" stopColor="#fbfbf9" />
-              <stop offset="0.45" stopColor="#dededa" />
-              <stop offset="1" stopColor="#a3a39f" />
+            <linearGradient id="arm-orange" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor={ORANGE_LIGHT} />
+              <stop offset="1" stopColor={ORANGE} />
             </linearGradient>
-            <linearGradient id="bit-metal" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stopColor="#5a6fd0" />
-              <stop offset="0.55" stopColor="#3245a0" />
-              <stop offset="1" stopColor="#1b2458" />
+            <linearGradient id="arm-steel" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor="#45454b" />
+              <stop offset="1" stopColor="#1d1d20" />
             </linearGradient>
-            <radialGradient id="bit-visor" cx="0.35" cy="0.3" r="0.9">
-              <stop offset="0" stopColor="#2a3c86" />
-              <stop offset="0.6" stopColor="#0f1748" />
-              <stop offset="1" stopColor="#060a24" />
-            </radialGradient>
-            <filter id="bit-glow" x="-60%" y="-60%" width="220%" height="220%">
-              <feGaussianBlur stdDeviation="3.5" result="blur" />
+            <pattern id="arm-hazard" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <rect width="6" height="12" fill="#f5b400" />
+              <rect x="6" width="6" height="12" fill="#1b1b1d" />
+            </pattern>
+            <linearGradient ref={beamGradientRef} id="arm-beam" gradientUnits="userSpaceOnUse">
+              <stop offset="0" stopColor={LENS} stopOpacity="0.55" />
+              <stop offset="1" stopColor={LENS} stopOpacity="0.04" />
+            </linearGradient>
+            <filter id="arm-glow" x="-80%" y="-80%" width="260%" height="260%">
+              <feGaussianBlur stdDeviation="2.5" result="blur" />
               <feMerge>
                 <feMergeNode in="blur" />
                 <feMergeNode in="SourceGraphic" />
               </feMerge>
             </filter>
-            <clipPath id="bit-visor-clip">
-              <rect x="50" y="74" width="140" height="88" rx="42" />
-            </clipPath>
           </defs>
 
-          <ellipse className="bit-shadow" cx="120" cy="292" rx="70" ry="6" fill="#000" opacity="0.3" />
+          <polygon
+            ref={beamRef}
+            fill="url(#arm-beam)"
+            className={`transition-opacity duration-300 ${scanning ? 'opacity-100' : 'opacity-0'}`}
+          />
 
-          <g className="bit-float">
-            {/* Arms (the right one waves) */}
-            <g transform="rotate(14 54 212)">
-              <rect x="44" y="206" width="20" height="58" rx="10" fill="url(#bit-metal)" />
-            </g>
-            <g transform="rotate(-14 186 212)">
-              <rect className="bit-arm-wave" x="176" y="206" width="20" height="58" rx="10" fill="url(#bit-metal)" />
-            </g>
+          <ellipse cx="130" cy="293" rx="78" ry="6" fill="#000" opacity="0.3" />
 
-            {/* Body with a little status display */}
-            <path
-              d="M62 214 Q62 200 78 198 L162 198 Q178 200 178 214 L170 268 Q168 284 152 284 L88 284 Q72 284 70 268 Z"
-              fill="url(#bit-shell)"
-            />
-            <rect x="94" y="220" width="52" height="32" rx="9" fill="url(#bit-visor)" />
-            <g className="bit-bars" fill={EYE} filter="url(#bit-glow)">
-              <rect x="106" y="230" width="6" height="14" rx="3" />
-              <rect x="117" y="230" width="6" height="14" rx="3" />
-              <rect x="128" y="230" width="6" height="14" rx="3" />
-            </g>
+          {/* Base: a hazard-striped plate, a pedestal with a status light, and a turntable */}
+          <rect x="60" y="272" width="140" height="18" rx="3" fill="url(#arm-hazard)" stroke={STEEL} strokeWidth="2" />
+          <path d="M92 272 L168 272 L158 240 L102 240 Z" fill="url(#arm-steel)" />
+          <circle className="arm-led" cx="130" cy="257" r="3.5" fill={LENS} filter="url(#arm-glow)" />
+          <rect x="94" y="230" width="72" height="13" rx="5" fill="url(#arm-orange)" />
 
-            <rect x="106" y="180" width="28" height="22" rx="6" fill="url(#bit-metal)" />
+          {/* Upper arm, drawn along +x from the shoulder */}
+          <g ref={upperRef}>
+            <rect x="-15" y="-15" width={UPPER + 30} height="30" rx="15" fill="url(#arm-orange)" />
+            <path d={`M10 -8 L${UPPER - 10} -8`} stroke={STEEL} strokeWidth="3" strokeLinecap="round" opacity="0.55" />
+            <circle cx={UPPER / 2} cy="5" r="2" fill={STEEL} opacity="0.6" />
+          </g>
 
-            {/* Head */}
-            <g ref={headRef}>
-              <line x1="120" y1="52" x2="120" y2="28" stroke="#3245a0" strokeWidth="4" strokeLinecap="round" />
-              <circle className="bit-antenna" cx="120" cy="22" r="7" fill={STATUS} filter="url(#bit-glow)" />
-              <rect x="20" y="104" width="18" height="44" rx="9" fill="url(#bit-metal)" />
-              <rect x="202" y="104" width="18" height="44" rx="9" fill="url(#bit-metal)" />
-              <rect x="32" y="50" width="176" height="136" rx="60" fill="url(#bit-shell)" />
-              <rect x="50" y="74" width="140" height="88" rx="42" fill="url(#bit-visor)" />
-              <ellipse cx="86" cy="86" rx="26" ry="7" fill="#fff" opacity="0.09" transform="rotate(-14 86 86)" />
+          {/* Forearm, drawn along +x from the elbow */}
+          <g ref={foreRef}>
+            <rect x="-11" y="-11" width={FORE + 22} height="22" rx="11" fill="url(#arm-orange)" />
+            <path d={`M8 -5 L${FORE - 8} -5`} stroke={STEEL} strokeWidth="2.5" strokeLinecap="round" opacity="0.55" />
+          </g>
 
-              <g clipPath="url(#bit-visor-clip)">
-                <rect className="bit-visor-scan" x="50" y="76" width="140" height="2" fill={EYE} opacity="0" />
-              </g>
+          {/* Joint caps */}
+          <circle cx={SHOULDER.x} cy={SHOULDER.y} r="18" fill="url(#arm-steel)" stroke="#55555c" strokeWidth="2" />
+          <circle cx={SHOULDER.x} cy={SHOULDER.y} r="6" fill="#55555c" />
+          <g ref={elbowRef}>
+            <circle r="13" fill="url(#arm-steel)" stroke="#55555c" strokeWidth="2" />
+            <circle r="4.5" fill="#55555c" />
+          </g>
 
-              <g ref={eyesRef} filter="url(#bit-glow)">
-                {happy ? (
-                  <g fill="none" stroke={EYE} strokeWidth="6" strokeLinecap="round">
-                    <path d="M80 124 Q92 106 104 124" />
-                    <path d="M136 124 Q148 106 160 124" />
-                  </g>
-                ) : (
-                  <g fill={EYE}>
-                    <rect x="80" y="102" width="24" height="34" rx="12" />
-                    <rect x="136" y="102" width="24" height="34" rx="12" />
-                  </g>
-                )}
-              </g>
-              <rect className="bit-mouth" x="108" y="146" width="24" height="4" rx="2" fill={EYE} opacity="0.75" />
-            </g>
+          {/* Camera head on the wrist, drawn along +x */}
+          <g ref={headRef}>
+            <circle r="9" fill="url(#arm-steel)" stroke="#55555c" strokeWidth="2" />
+            <rect x="6" y="-12" width="30" height="24" rx="6" fill="url(#arm-steel)" />
+            <rect x="12" y="-16" width="10" height="5" rx="2" fill={ORANGE} />
+            <circle cx="38" cy="0" r="10" fill="#0e0e10" stroke="#55555c" strokeWidth="1.5" />
+            <circle ref={lensRef} cx="38" cy="0" r="6" fill={LENS} filter="url(#arm-glow)" />
           </g>
         </svg>
       </button>

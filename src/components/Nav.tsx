@@ -67,7 +67,7 @@ export default function Nav({ theme, onToggleTheme }: Props) {
                   <a
                     href={`#${s.id}`}
                     aria-current={current ? 'true' : undefined}
-                    className={`relative flex justify-center py-6 transition-colors duration-300 [@media(max-height:760px)]:py-4 ${
+                    className={`relative flex justify-center py-5 transition-colors duration-300 [@media(max-height:820px)]:py-3 ${
                       current ? 'text-ink' : 'text-ink3 hover:text-ink2'
                     }`}
                   >

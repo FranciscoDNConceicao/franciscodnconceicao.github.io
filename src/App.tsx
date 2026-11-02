@@ -6,6 +6,7 @@ import Footer from './components/Footer'
 import Hero from './components/Hero'
 import Nav from './components/Nav'
 import Projects from './components/Projects'
+import Query from './components/Query'
 import Skills from './components/Skills'
 import { useTheme } from './hooks'
 
@@ -29,6 +30,7 @@ export default function App() {
           <Experience />
           <Projects />
           <Skills />
+          <Query />
           <Contact />
         </main>
         <Footer />
