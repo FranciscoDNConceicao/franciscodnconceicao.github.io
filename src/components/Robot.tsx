@@ -9,7 +9,7 @@ const LINES = [
   "I'm Bit. Francisco taught my cousin Q.bo to recognise faces.",
   'Running a face scan…',
   'Two joints, a bit of trigonometry, and I can follow your cursor.',
-  'I can draw, too. Find me in the Lab, further down.',
+  "Scroll down, there's more about him.",
 ]
 
 interface Props {

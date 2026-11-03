@@ -3,7 +3,8 @@
 @tailwind utilities;
 
 /* ---------- Theme tokens (RGB channels so Tailwind can apply alpha) ---------- */
-/* Charcoal and off-white. Bit, the robot, is the only thing with colour. */
+/* Charcoal and off-white, with Bit's safety orange as the one accent.
+   `accent` is the fill for buttons; `accent-ink` is the orange used as text (4.5:1 or better). */
 :root,
 :root[data-theme='dark'] {
   color-scheme: dark;
@@ -12,8 +13,8 @@
   --ink: 240 240 238;
   --ink-2: 168 168 166;
   --ink-3: 132 132 130;
-  --accent: 240 240 238;
-  --accent-ink: 240 240 238;
+  --accent: 242 107 15;
+  --accent-ink: 255 138 61;
   --on-accent: 24 24 24;
 }
 
@@ -24,9 +25,9 @@
   --ink: 22 22 22;
   --ink-2: 84 84 82;
   --ink-3: 106 106 104;
-  --accent: 22 22 22;
-  --accent-ink: 22 22 22;
-  --on-accent: 242 241 239;
+  --accent: 194 65 12;
+  --accent-ink: 185 61 11;
+  --on-accent: 255 255 255;
 }
 
 @layer base {
@@ -77,12 +78,25 @@
   }
 
   .btn-primary {
-    @apply inline-flex h-11 items-center gap-2 rounded-lg bg-ink px-4 text-[15px] font-medium text-bg transition-opacity hover:opacity-85;
+    @apply inline-flex h-11 items-center gap-2 rounded-lg bg-accent px-4 text-[15px] font-medium text-on-accent transition-[opacity,transform] duration-200 hover:opacity-90 active:scale-[0.98];
   }
 
   /* Plain text links with an underline that is always there, like in a document. */
   .text-link {
-    @apply text-ink underline decoration-ink/30 decoration-1 underline-offset-4 transition-colors hover:decoration-ink;
+    @apply text-ink underline decoration-ink/30 decoration-1 underline-offset-4 transition-colors duration-200 hover:decoration-accent-ink;
+  }
+
+  /* A boxed card on the drawing: hairline border over a slightly lifted surface. */
+  .panel {
+    @apply rounded-[4px] border border-ink/15 bg-surface/70;
+  }
+
+  .chip {
+    @apply inline-flex h-7 items-center rounded-[3px] border border-ink/15 bg-bg/60 px-2.5 font-mono text-[12.5px] text-ink2;
+  }
+
+  .eyebrow {
+    @apply font-mono text-[11px] uppercase tracking-[0.12em] text-ink3;
   }
 }
 
@@ -114,12 +128,6 @@
 
 .arch-inner {
   border-radius: 50% 50% 24px 24px / 40% 40% 24px 24px;
-}
-
-/* Vertical labels in the sidebar, reading bottom to top. */
-.vertical-label {
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
 }
 
 /* ---------- Bit, the robot arm ---------- */

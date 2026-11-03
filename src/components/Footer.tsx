@@ -4,7 +4,7 @@ import { profile } from '../data/content'
 function Cell({ label, children, wide = false }: { label: string; children: ReactNode; wide?: boolean }) {
   return (
     <div className={`border-b border-r border-ink/20 px-3 py-2.5 ${wide ? 'col-span-2' : ''}`}>
-      <div className="text-[9.5px] uppercase tracking-[0.1em] text-ink3">{label}</div>
+      <div className="text-[11px] uppercase tracking-[0.1em] text-ink3">{label}</div>
       <div className="mt-1 text-ink">{children}</div>
     </div>
   )

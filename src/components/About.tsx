@@ -11,11 +11,12 @@ export default function About() {
           </p>
         ))}
       </div>
-      <dl className="mt-10 grid grid-cols-2 gap-x-8 gap-y-6 border-t hairline pt-8 sm:grid-cols-4">
+      {/* Laid out like a spec table: hairline cells, drawn by the 1px gaps over a tinted background. */}
+      <dl className="mt-10 grid grid-cols-2 gap-px overflow-hidden rounded-[4px] border border-ink/15 bg-ink/10 sm:grid-cols-4">
         {facts.map((fact) => (
-          <div key={fact.label}>
-            <dt className="text-[13px] text-ink3">{fact.label}</dt>
-            <dd className="mt-1 text-[15px] leading-snug">{fact.value}</dd>
+          <div key={fact.label} className="bg-surface px-4 py-3.5">
+            <dt className="eyebrow">{fact.label}</dt>
+            <dd className="mt-1.5 text-[15px] leading-snug">{fact.value}</dd>
           </div>
         ))}
       </dl>

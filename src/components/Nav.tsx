@@ -24,8 +24,11 @@ function Mark() {
   )
 }
 
+/** A rail control: an icon with a short label under it, so nothing in the rail is icon-only. */
 const railButton =
-  'grid h-9 w-9 place-items-center rounded-full text-ink3 transition-colors duration-300 hover:bg-ink/[0.07] hover:text-ink'
+  'flex w-14 flex-col items-center gap-1 rounded-lg py-1.5 text-[10.5px] font-medium text-ink3 transition-colors duration-200 hover:bg-ink/[0.07] hover:text-ink [@media(max-height:760px)]:py-1'
+
+const index = (i: number) => String(i + 1).padStart(2, '0')
 
 /** Desktop: a fixed rail on the left. Mobile: a top bar with a drop-down menu. */
 export default function Nav({ theme, onToggleTheme }: Props) {
@@ -58,25 +61,29 @@ export default function Nav({ theme, onToggleTheme }: Props) {
           <Mark />
         </a>
 
+        {/* Primary: the page sections, numbered like the zones on the drawing frame. */}
         <nav aria-label="Sections" className="flex min-h-0 w-full flex-1 flex-col justify-center overflow-y-auto py-6">
           <ul className="w-full border-b hairline">
-            {sections.map((s) => {
+            {sections.map((s, i) => {
               const current = active === s.id
               return (
                 <li key={s.id} className="border-t hairline">
                   <a
                     href={`#${s.id}`}
                     aria-current={current ? 'true' : undefined}
-                    className={`relative flex justify-center py-5 transition-colors duration-300 [@media(max-height:820px)]:py-3 ${
-                      current ? 'text-ink' : 'text-ink3 hover:text-ink2'
+                    className={`relative flex flex-col items-center gap-1 py-3.5 transition-colors duration-200 [@media(max-height:820px)]:py-2.5 ${
+                      current ? 'bg-ink/[0.05] text-ink' : 'text-ink3 hover:bg-ink/[0.03] hover:text-ink'
                     }`}
                   >
                     <span
-                      className={`absolute inset-y-3 right-0 w-px transition-colors duration-300 ${
-                        current ? 'bg-ink' : 'bg-transparent'
+                      className={`absolute inset-y-0 right-0 w-0.5 bg-accent transition-transform duration-300 ease-out ${
+                        current ? 'scale-y-100' : 'scale-y-0'
                       }`}
                     />
-                    <span className="vertical-label text-[13px]">{s.label}</span>
+                    <span aria-hidden="true" className={`font-mono text-[10px] ${current ? 'text-accent-ink' : 'text-ink3'}`}>
+                      {index(i)}
+                    </span>
+                    <span className={`text-[12.5px] leading-none ${current ? 'font-medium' : ''}`}>{s.label}</span>
                   </a>
                 </li>
               )
@@ -84,23 +91,25 @@ export default function Nav({ theme, onToggleTheme }: Props) {
           </ul>
         </nav>
 
-        <div className="mb-6 flex shrink-0 flex-col items-center gap-1.5">
-          <div className="mb-4 [@media(max-height:760px)]:mb-2">
+        {/* Secondary: reading progress, then the page controls, set apart from the sections. */}
+        <div className="mb-5 flex w-full shrink-0 flex-col items-center">
+          <div className="mb-3 [@media(max-height:760px)]:mb-2">
             <ScrollBattery vertical showLabel />
           </div>
-          <button type="button" onClick={onToggleTheme} className={railButton} aria-label={themeLabel} title={themeLabel}>
-            {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
-          </button>
-          <a href={profile.cv} target="_blank" rel="noopener" className={railButton} aria-label="Download CV" title="Download CV">
-            <Download size={15} />
-          </a>
-          <a
-            href="#top"
-            className="mt-3 flex flex-col items-center gap-1.5 text-[11px] text-ink3 transition-colors hover:text-ink [@media(max-height:760px)]:hidden"
-          >
-            <ArrowUp size={13} />
-            Top
-          </a>
+          <div className="flex w-full flex-col items-center gap-0.5 border-t hairline pt-3">
+            <button type="button" onClick={onToggleTheme} className={railButton} aria-label={themeLabel}>
+              {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
+              <span aria-hidden="true">{theme === 'dark' ? 'Light' : 'Dark'}</span>
+            </button>
+            <a href={profile.cv} target="_blank" rel="noopener" className={railButton} aria-label="Download CV">
+              <Download size={15} />
+              <span aria-hidden="true">CV</span>
+            </a>
+            <a href="#top" className={`${railButton} [@media(max-height:760px)]:hidden`}>
+              <ArrowUp size={15} />
+              Top
+            </a>
+          </div>
         </div>
       </aside>
 
@@ -142,13 +151,22 @@ export default function Nav({ theme, onToggleTheme }: Props) {
         {menuOpen && (
           <nav id="mobile-menu" aria-label="Sections" className="page pb-4">
             <ul className="border-t hairline">
-              {sections.map((s) => (
-                <li key={s.id} className="border-b hairline">
-                  <a href={`#${s.id}`} onClick={() => setMenuOpen(false)} className="block py-3.5 text-[17px]">
-                    {s.label}
-                  </a>
-                </li>
-              ))}
+              {sections.map((s) => {
+                const current = active === s.id
+                return (
+                  <li key={s.id} className="border-b hairline">
+                    <a
+                      href={`#${s.id}`}
+                      onClick={() => setMenuOpen(false)}
+                      aria-current={current ? 'true' : undefined}
+                      className={`flex items-center justify-between py-3.5 text-[17px] ${current ? 'font-medium text-ink' : 'text-ink2'}`}
+                    >
+                      {s.label}
+                      {current && <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-accent" />}
+                    </a>
+                  </li>
+                )
+              })}
               <li>
                 <a
                   href={profile.cv}

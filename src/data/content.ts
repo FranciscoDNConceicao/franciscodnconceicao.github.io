@@ -16,15 +16,21 @@ export const profile = {
 
 export const sections = [
   { id: 'about', label: 'About' },
-  { id: 'experience', label: 'Experience' },
   { id: 'projects', label: 'Projects' },
+  { id: 'experience', label: 'Experience' },
   { id: 'skills', label: 'Skills' },
-  { id: 'lab', label: 'Lab' },
   { id: 'contact', label: 'Contact' },
 ] as const
 
 export const intro =
   "I'm a software engineer from Paredes, Portugal. I work at ANO Software in Porto, mostly with Java, Python, PostgreSQL and React."
+
+/** The at-a-glance strip under the hero, laid out like a drawing's title block. */
+export const heroSpec = [
+  { label: 'Now', value: 'Software Engineer, ANO Software' },
+  { label: 'Stack', value: 'Java · Python · PostgreSQL · React' },
+  { label: 'Based in', value: 'Paredes, Portugal' },
+]
 
 export const about = [
   "I've always liked figuring out how things work. That's what got me into Computer Engineering at UTAD, and it's still my favourite part of the job: digging into something until I really understand it, and then making it better.",

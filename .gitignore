@@ -23,3 +23,4 @@ node_modules
 
 # Build output (built by the GitHub Pages workflow)
 dist
+.superdesign

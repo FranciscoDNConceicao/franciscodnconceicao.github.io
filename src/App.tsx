@@ -5,7 +5,6 @@ import Experience from './components/Experience'
 import Footer from './components/Footer'
 import Hero from './components/Hero'
 import Nav from './components/Nav'
-import Plotter from './components/Plotter'
 import Projects from './components/Projects'
 import Skills from './components/Skills'
 import { useTheme } from './hooks'
@@ -27,10 +26,9 @@ export default function App() {
         <main id="main">
           <Hero />
           <About />
-          <Experience />
           <Projects />
+          <Experience />
           <Skills />
-          <Plotter />
           <Contact />
         </main>
         <Footer />

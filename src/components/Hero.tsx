@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { intro, profile } from '../data/content'
+import { heroSpec, intro, profile } from '../data/content'
 import { useReducedMotion } from '../hooks'
 import ArmBlueprint from './ArmBlueprint'
 import { ArrowDown } from './Icons'
@@ -84,11 +84,18 @@ export default function Hero() {
   }
 
   return (
-    <section id="top" className="relative isolate pb-10 pt-24 sm:pb-14 sm:pt-28 lg:pt-20">
-      <div className="page grid items-center gap-16 lg:grid-cols-[1fr_auto]">
-        <div className="max-w-[40rem]">
-          <p className="text-[18px] text-ink2">Olá, I'm</p>
-          <h1 className="mt-1 text-[clamp(2.7rem,6.2vw,5rem)] font-semibold leading-[1.04] tracking-[-0.03em]">
+    <section
+      id="top"
+      className="relative isolate flex flex-col justify-center pb-10 pt-24 sm:pb-14 sm:pt-28 lg:min-h-[100svh] lg:pb-28 lg:pt-16"
+    >
+      <div className="page grid w-full items-center gap-16 lg:grid-cols-[1fr_auto]">
+        <div className="max-w-[44rem]">
+          <p className="eyebrow mb-6 flex items-center gap-2.5">
+            <span aria-hidden="true" className="h-[9px] w-[9px] bg-accent" />
+            Software engineer — Porto, PT
+          </p>
+          <p className="text-[18px] text-ink2 sm:text-[20px]">Olá, I'm</p>
+          <h1 className="mt-1 text-[clamp(2.7rem,7vw,6rem)] font-semibold leading-[1.02] tracking-[-0.035em]">
             Francisco Conceição
           </h1>
           <p className="mt-6 max-w-[34rem] text-[18px] leading-[1.65] text-ink2 sm:text-[19px]">{intro}</p>
@@ -107,13 +114,33 @@ export default function Hero() {
               LinkedIn
             </a>
           </div>
+
+          {/* Who, what and where at a glance, drawn like the title block in the footer. */}
+          <dl className="mt-12 grid max-w-[36rem] gap-px overflow-hidden rounded-[4px] border border-ink/15 bg-ink/15 sm:grid-cols-3">
+            {heroSpec.map((item) => (
+              <div key={item.label} className="bg-bg/90 px-4 py-3">
+                <dt className="eyebrow">{item.label}</dt>
+                <dd className="mt-1.5 text-[14px] leading-snug text-ink2">{item.value}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
 
-        <figure className="relative mb-14 w-[min(14rem,58vw)] lg:w-[15rem] xl:w-[17rem]">
+        {/* Grows in steps so the blueprint behind it never runs under the text column. */}
+        <figure className="relative mb-14 w-[min(14rem,58vw)] lg:mb-16 lg:w-[15rem] xl:w-[18rem] min-[1400px]:w-[21rem]">
+          {/* A dimension line down the portrait's right edge, labelled like a figure on a drawing. */}
+          <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 -right-8 hidden w-3 lg:block">
+            <span className="absolute inset-y-0 left-1/2 w-px bg-ink/25" />
+            <span className="absolute left-0 top-0 h-px w-3 bg-ink/25" />
+            <span className="absolute bottom-0 left-0 h-px w-3 bg-ink/25" />
+            <span className="eyebrow absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rotate-180 whitespace-nowrap bg-bg py-2 [writing-mode:vertical-rl]">
+              Fig. 1 — Francisco
+            </span>
+          </div>
           <ArmBlueprint className="pointer-events-none absolute -left-[104%] -top-[6%] -z-10 hidden w-[175%] text-ink/[0.22] lg:block" />
           <div
             ref={portraitRef}
-            className="arch relative bg-ink/20 p-px shadow-[0_40px_90px_-35px_rgba(0,0,0,0.75)]"
+            className="arch relative cursor-pointer bg-ink/20 p-px shadow-[0_40px_90px_-35px_rgba(0,0,0,0.75)]"
             onMouseEnter={onPortraitEnter}
             onMouseLeave={onPortraitLeave}
             onClick={startScan}
@@ -157,15 +184,24 @@ export default function Hero() {
             this is Bit, say hi!
             <Scribble flip />
           </p>
-          <p
-            aria-hidden="true"
-            className="pointer-events-none absolute left-[6%] top-full mt-5 hidden rotate-[-4deg] items-start gap-1 font-hand text-[22px] leading-none text-ink2 lg:flex"
-          >
-            <Scribble />
-            this is Bit, say hi!
-          </p>
+          <div aria-hidden="true" className="pointer-events-none absolute left-[6%] top-full mt-5 hidden lg:block">
+            <p className="flex rotate-[-4deg] items-start gap-1 font-hand text-[22px] leading-none text-ink2">
+              <Scribble />
+              this is Bit, say hi!
+            </p>
+            <p className="eyebrow ml-10 mt-3">Fig. 2 — Bit, robot arm</p>
+          </div>
         </figure>
       </div>
+
+      <a
+        href="#about"
+        aria-label="Scroll to About"
+        className="eyebrow absolute bottom-10 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 transition-colors duration-200 hover:text-ink lg:flex"
+      >
+        Scroll ↓
+        <span aria-hidden="true" className="h-8 w-px bg-ink/20" />
+      </a>
     </section>
   )
 }
