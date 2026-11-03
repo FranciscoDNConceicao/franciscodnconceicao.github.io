@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import type { RefObject } from 'react'
 import { useReducedMotion } from '../hooks'
+import { BIT, solveArm } from '../lib/bit'
+import type { Point } from '../lib/bit'
 
 /** What Bit says each time it is clicked, in order. */
 const LINES = [
   "I'm Bit. Francisco taught my cousin Q.bo to recognise faces.",
   'Running a face scan…',
   'Two joints, a bit of trigonometry, and I can follow your cursor.',
-  "Scroll down, there's more about him.",
+  'I can draw, too. Find me in the Lab, further down.',
 ]
 
 interface Props {
@@ -19,40 +21,14 @@ interface Props {
   lookAt: RefObject<HTMLElement>
 }
 
-type Point = { x: number; y: number }
-
 // Arm geometry, in SVG units (viewBox 260 × 300).
 const SHOULDER: Point = { x: 130, y: 222 }
 const UPPER = 100
 const FORE = 86
-const LENS = '#7cf4ff'
-const ORANGE_LIGHT = '#ff9a3c'
-const ORANGE = '#f26b0f'
-const STEEL = '#26262a'
+const { lens: LENS, orangeLight: ORANGE_LIGHT, orange: ORANGE, steel: STEEL } = BIT
 const DEG = 180 / Math.PI
 
-/**
- * Two-link inverse kinematics: the shoulder and elbow angles that put the wrist on `target`
- * (or as close as the arm can reach), always choosing the elbow-up solution.
- */
-function solve(target: Point) {
-  const dx = target.x - SHOULDER.x
-  const dy = target.y - SHOULDER.y
-  const aim = Math.atan2(dy, dx)
-  const dist = Math.min(UPPER + FORE - 3, Math.max(Math.abs(UPPER - FORE) + 12, Math.hypot(dx, dy)))
-  const bend = Math.acos(Math.min(1, Math.max(-1, (UPPER ** 2 + dist ** 2 - FORE ** 2) / (2 * UPPER * dist))))
-  const elbowFor = (angle: number) => ({
-    x: SHOULDER.x + UPPER * Math.cos(angle),
-    y: SHOULDER.y + UPPER * Math.sin(angle),
-  })
-  // In SVG coordinates "up" is a smaller y, so keep whichever elbow sits higher.
-  const shoulder = elbowFor(aim - bend).y <= elbowFor(aim + bend).y ? aim - bend : aim + bend
-  const elbow = elbowFor(shoulder)
-  const reach = { x: SHOULDER.x + dist * Math.cos(aim), y: SHOULDER.y + dist * Math.sin(aim) }
-  const forearm = Math.atan2(reach.y - elbow.y, reach.x - elbow.x)
-  const wrist = { x: elbow.x + FORE * Math.cos(forearm), y: elbow.y + FORE * Math.sin(forearm) }
-  return { shoulder, elbow, forearm, wrist }
-}
+const solve = (target: Point) => solveArm(SHOULDER, UPPER, FORE, target, 'up')
 
 /** Bit, an industrial robot arm whose camera follows the cursor. Click it to say hello. */
 export default function Robot({ onScan, scanning, lookAt }: Props) {
