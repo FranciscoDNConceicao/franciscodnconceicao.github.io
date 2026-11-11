@@ -21,13 +21,13 @@ interface ProjectProps {
 /** Corner crop marks around a thumbnail, like the registration marks on a drawing. */
 function CropMarks() {
   const mark =
-    'absolute h-2.5 w-2.5 border-ink/40 transition-colors duration-200 group-hover:border-accent-ink group-focus-within:border-accent-ink'
+    'absolute h-2.5 w-2.5 border-ink/40 transition-[border-color,transform] duration-300 ease-out group-hover:border-accent-ink group-focus-within:border-accent-ink'
   return (
     <span aria-hidden="true">
-      <span className={`${mark} -left-1.5 -top-1.5 border-l border-t`} />
-      <span className={`${mark} -right-1.5 -top-1.5 border-r border-t`} />
-      <span className={`${mark} -bottom-1.5 -left-1.5 border-b border-l`} />
-      <span className={`${mark} -bottom-1.5 -right-1.5 border-b border-r`} />
+      <span className={`${mark} -left-1.5 -top-1.5 border-l border-t group-hover:-translate-x-1 group-hover:-translate-y-1`} />
+      <span className={`${mark} -right-1.5 -top-1.5 border-r border-t group-hover:-translate-y-1 group-hover:translate-x-1`} />
+      <span className={`${mark} -bottom-1.5 -left-1.5 border-b border-l group-hover:-translate-x-1 group-hover:translate-y-1`} />
+      <span className={`${mark} -bottom-1.5 -right-1.5 border-b border-r group-hover:translate-x-1 group-hover:translate-y-1`} />
     </span>
   )
 }
@@ -36,7 +36,7 @@ function CropMarks() {
 function Project({ number, title, description, stack, link, media, overlay, featured = false }: ProjectProps) {
   return (
     <article className={`group relative flex flex-col ${featured ? 'sm:col-span-2' : ''}`}>
-      <div className="panel flex flex-1 flex-col transition-colors duration-200 group-hover:border-ink/35">
+      <div className="panel spot flex flex-1 flex-col group-hover:-translate-y-1 group-hover:border-accent-ink/45 motion-reduce:group-hover:translate-y-0">
         <div
           className={`relative overflow-hidden rounded-t-[3px] border-b border-ink/10 bg-surface ${
             featured ? 'aspect-[16/10] sm:aspect-[2/1]' : 'aspect-[16/10]'
@@ -48,8 +48,8 @@ function Project({ number, title, description, stack, link, media, overlay, feat
           {overlay}
         </div>
         <div className="flex flex-1 flex-col p-5 sm:p-6">
-          <p className="eyebrow">Project {number}</p>
-          <h3 className="mt-2 text-[20px] font-semibold leading-tight">
+          <p className="eyebrow transition-colors duration-200 group-hover:text-ink2">Project {number}</p>
+          <h3 className="mt-2 text-[20px] font-semibold leading-tight transition-colors duration-200 group-hover:text-accent-ink">
             <a href={link} target="_blank" rel="noopener" className="after:absolute after:inset-0 after:content-['']">
               {title}
             </a>
@@ -62,7 +62,7 @@ function Project({ number, title, description, stack, link, media, overlay, feat
               </li>
             ))}
           </ul>
-          <span aria-hidden="true" className="mt-5 inline-flex items-center gap-1.5 text-[14px] font-medium text-accent-ink">
+          <span aria-hidden="true" className="mt-5 inline-flex items-center gap-1.5 text-[14px] font-medium text-accent-ink transition-[gap] duration-200 group-hover:gap-2.5">
             Code on GitHub
             <ArrowUpRight size={14} className="transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
           </span>
@@ -175,7 +175,7 @@ export default function Projects() {
             <button
               type="button"
               onClick={() => setChoice(!playing)}
-              className="absolute bottom-3 left-3 z-10 grid h-9 w-9 place-items-center rounded-full bg-black/65 text-white backdrop-blur-sm transition-colors duration-200 hover:bg-black/80"
+              className="absolute bottom-3 left-3 z-10 grid h-9 w-9 place-items-center rounded-full bg-black/65 text-white backdrop-blur-sm transition-[background-color,color,transform] duration-200 hover:scale-110 hover:bg-accent hover:text-on-accent"
               aria-label={playing ? 'Pause video' : 'Play video'}
               title={playing ? 'Pause video' : 'Play video'}
             >

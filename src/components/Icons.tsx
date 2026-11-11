@@ -58,19 +58,6 @@ export const Check = (p: IconProps) => (
   </Icon>
 )
 
-export const Sun = (p: IconProps) => (
-  <Icon {...p}>
-    <circle cx="12" cy="12" r="4" />
-    <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
-  </Icon>
-)
-
-export const Moon = (p: IconProps) => (
-  <Icon {...p}>
-    <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5Z" />
-  </Icon>
-)
-
 export const Menu = (p: IconProps) => (
   <Icon {...p}>
     <path d="M4 8h16M4 16h16" />
@@ -99,4 +86,39 @@ export const LinkedIn = ({ size = 16, ...p }: IconProps) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" {...p}>
     <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.86 0-2.14 1.45-2.14 2.95v5.66H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13ZM7.12 20.45H3.56V9h3.56v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0Z" />
   </svg>
+)
+
+export const User = (p: IconProps) => (
+  <Icon {...p}>
+    <circle cx="12" cy="8" r="3.75" />
+    <path d="M4.5 20c.9-3.6 3.9-5.75 7.5-5.75s6.6 2.15 7.5 5.75" />
+  </Icon>
+)
+
+export const Layers = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="m12 3.5 8.5 4.25L12 12 3.5 7.75z" />
+    <path d="m3.5 12 8.5 4.25L20.5 12" />
+    <path d="m3.5 16.25 8.5 4.25 8.5-4.25" />
+  </Icon>
+)
+
+export const Briefcase = (p: IconProps) => (
+  <Icon {...p}>
+    <rect x="3.5" y="7" width="17" height="12.5" rx="2" />
+    <path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7M3.5 12.5h17" />
+  </Icon>
+)
+
+export const Code = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="m8.5 7.5-5 4.5 5 4.5M15.5 7.5l5 4.5-5 4.5M13.25 5l-2.5 14" />
+  </Icon>
+)
+
+export const Mail = (p: IconProps) => (
+  <Icon {...p}>
+    <rect x="3.5" y="5.5" width="17" height="13" rx="2" />
+    <path d="m4 7 8 6 8-6" />
+  </Icon>
 )

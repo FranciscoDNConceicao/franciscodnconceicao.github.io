@@ -1,4 +1,5 @@
 import About from './components/About'
+import Blueprint from './components/Blueprint'
 import Contact from './components/Contact'
 import DrawingFrame from './components/DrawingFrame'
 import Experience from './components/Experience'
@@ -7,11 +8,8 @@ import Hero from './components/Hero'
 import Nav from './components/Nav'
 import Projects from './components/Projects'
 import Skills from './components/Skills'
-import { useTheme } from './hooks'
 
 export default function App() {
-  const { theme, toggle } = useTheme()
-
   return (
     <>
       <a
@@ -20,9 +18,10 @@ export default function App() {
       >
         Skip to content
       </a>
-      <Nav theme={theme} onToggleTheme={toggle} />
+      <Blueprint />
+      <Nav />
       <DrawingFrame />
-      <div className="graph-paper lg:pl-[5.5rem]">
+      <div className="lg:pl-[5.5rem]">
         <main id="main">
           <Hero />
           <About />

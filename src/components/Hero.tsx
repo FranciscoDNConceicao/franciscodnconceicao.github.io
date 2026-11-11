@@ -86,19 +86,22 @@ export default function Hero() {
   return (
     <section
       id="top"
-      className="relative isolate flex flex-col justify-center pb-10 pt-24 sm:pb-14 sm:pt-28 lg:min-h-[100svh] lg:pb-28 lg:pt-16"
+      className="relative isolate flex flex-col justify-center pb-12 pt-28 sm:pb-16 sm:pt-32 lg:min-h-[100svh] lg:pb-32 lg:pt-20"
     >
       <div className="page grid w-full items-center gap-16 lg:grid-cols-[1fr_auto]">
         <div className="max-w-[44rem]">
-          <p className="eyebrow mb-6 flex items-center gap-2.5">
-            <span aria-hidden="true" className="h-[9px] w-[9px] bg-accent" />
+          <p className="eyebrow group mb-6 flex w-fit cursor-default items-center gap-2.5">
+            <span
+              aria-hidden="true"
+              className="h-[9px] w-[9px] bg-accent shadow-[0_0_10px_rgb(var(--accent)/0.7)] transition-transform duration-500 ease-out group-hover:rotate-[135deg] group-hover:scale-125"
+            />
             Software engineer — Porto, PT
           </p>
-          <p className="text-[18px] text-ink2 sm:text-[20px]">Olá, I'm</p>
-          <h1 className="mt-1 text-[clamp(2.7rem,7vw,6rem)] font-semibold leading-[1.02] tracking-[-0.035em]">
+          <p className="text-[16px] text-ink2 sm:text-[18px]">Olá, I'm</p>
+          <h1 className="mt-1 w-fit cursor-default bg-gradient-to-r from-ink via-ink to-accent-ink bg-[length:200%_100%] bg-left bg-clip-text text-[clamp(2.3rem,5.4vw,4.6rem)] font-semibold leading-[1.02] tracking-[-0.035em] text-transparent transition-[background-position] duration-700 ease-out hover:bg-right">
             Francisco Conceição
           </h1>
-          <p className="mt-6 max-w-[34rem] text-[18px] leading-[1.65] text-ink2 sm:text-[19px]">{intro}</p>
+          <p className="mt-5 max-w-[32rem] text-[16px] leading-[1.7] text-ink2 sm:text-[17px]">{intro}</p>
           <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4 text-[15px]">
             <a href={profile.cv} target="_blank" rel="noopener" className="btn-primary">
               Download my CV
@@ -116,9 +119,9 @@ export default function Hero() {
           </div>
 
           {/* Who, what and where at a glance, drawn like the title block in the footer. */}
-          <dl className="mt-12 grid max-w-[36rem] gap-px overflow-hidden rounded-[4px] border border-ink/15 bg-ink/15 sm:grid-cols-3">
+          <dl className="spot mt-12 grid max-w-[34rem] gap-px overflow-hidden rounded-[4px] border border-ink/15 bg-ink/15 transition-[border-color,box-shadow] duration-300 hover:border-accent-ink/40 hover:shadow-[0_20px_50px_-30px_rgb(var(--accent)/0.6)] sm:grid-cols-3">
             {heroSpec.map((item) => (
-              <div key={item.label} className="bg-bg/90 px-4 py-3">
+              <div key={item.label} className="spec-cell bg-bg/90 px-4 py-3">
                 <dt className="eyebrow">{item.label}</dt>
                 <dd className="mt-1.5 text-[14px] leading-snug text-ink2">{item.value}</dd>
               </div>
@@ -140,7 +143,7 @@ export default function Hero() {
           <ArmBlueprint className="pointer-events-none absolute -left-[104%] -top-[6%] -z-10 hidden w-[175%] text-ink/[0.22] lg:block" />
           <div
             ref={portraitRef}
-            className="arch relative cursor-pointer bg-ink/20 p-px shadow-[0_40px_90px_-35px_rgba(0,0,0,0.75)]"
+            className="arch relative cursor-pointer bg-ink/20 p-px shadow-[0_40px_90px_-35px_rgba(0,0,0,0.75)] transition-[transform,background-color,box-shadow] duration-500 ease-out hover:-translate-y-1 hover:bg-accent-ink/70 hover:shadow-[0_40px_90px_-30px_rgb(var(--accent)/0.55)] motion-reduce:hover:translate-y-0"
             onMouseEnter={onPortraitEnter}
             onMouseLeave={onPortraitLeave}
             onClick={startScan}
@@ -151,7 +154,7 @@ export default function Hero() {
                 alt="Portrait of Francisco Conceição"
                 width={720}
                 height={720}
-                className="block aspect-[4/5] w-full object-cover object-[50%_30%]"
+                className="block aspect-[4/5] w-full object-cover object-[50%_30%] transition-transform duration-700 ease-out [.arch:hover_&]:scale-[1.04] motion-reduce:[.arch:hover_&]:scale-100"
               />
               {scan === 'scanning' && !reducedMotion && (
                 <div key={scanId} aria-hidden="true" className="scan-sweep pointer-events-none absolute inset-0" />
@@ -197,10 +200,12 @@ export default function Hero() {
       <a
         href="#about"
         aria-label="Scroll to About"
-        className="eyebrow absolute bottom-10 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 transition-colors duration-200 hover:text-ink lg:flex"
+        className="eyebrow group absolute bottom-10 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 transition-colors duration-200 hover:text-accent-ink lg:flex"
       >
         Scroll ↓
-        <span aria-hidden="true" className="h-8 w-px bg-ink/20" />
+        <span aria-hidden="true" className="relative h-8 w-px overflow-hidden bg-ink/20">
+          <span className="absolute inset-x-0 top-0 h-3 -translate-y-full bg-accent-ink group-hover:animate-[scroll-cue_1.1s_ease-in-out_infinite]" />
+        </span>
       </a>
     </section>
   )

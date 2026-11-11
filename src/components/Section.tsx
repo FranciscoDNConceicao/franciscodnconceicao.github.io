@@ -40,16 +40,19 @@ export default function Section({ id, title, wide = false, children }: Props) {
   }, [reducedMotion])
 
   return (
-    <section ref={ref} id={id} className="py-12 sm:py-16">
+    <section ref={ref} id={id} className="py-14 sm:py-20">
       <div className="page">
         <div
           className={`grid gap-6 border-t hairline pt-8 transition-[opacity,transform] duration-[400ms] ease-out lg:grid-cols-[12rem_1fr] lg:gap-12 ${
             shown ? '' : 'translate-y-3 opacity-0'
           }`}
         >
-          <h2 className="flex items-baseline gap-3 text-[1.35rem] font-semibold lg:sticky lg:top-10 lg:flex-col lg:gap-1.5 lg:self-start lg:text-[1.2rem]">
-            <span aria-hidden="true" className="font-mono text-[13px] font-medium text-accent-ink">{number}</span>
-            {title}
+          <h2 className="group/title flex cursor-default items-baseline gap-3 text-[1.35rem] font-semibold lg:sticky lg:top-10 lg:flex-col lg:gap-1.5 lg:self-start lg:text-[1.2rem]">
+            <span aria-hidden="true" className="flex items-center gap-2 font-mono text-[13px] font-medium text-accent-ink">
+              {number}
+              <span className="h-px w-0 bg-accent-ink transition-[width] duration-300 ease-out group-hover/title:w-8" />
+            </span>
+            <span className="transition-transform duration-300 ease-out group-hover/title:translate-x-1">{title}</span>
           </h2>
           <div className={`min-w-0 ${wide ? '' : 'max-w-[44rem]'}`}>{children}</div>
         </div>

@@ -4,9 +4,9 @@ export type Point = { x: number; y: number }
 
 export const BIT = {
   lens: '#7cf4ff',
-  orangeLight: '#ff9a3c',
-  orange: '#f26b0f',
-  steel: '#26262a',
+  bodyLight: '#7ec4ff',
+  body: '#2f7ff0',
+  steel: '#1a2a44',
 }
 
 export interface ArmPose {

@@ -8,12 +8,12 @@ export default function Contact() {
 
   return (
     <Section id="contact" title="Contact">
-      <div className="panel p-6 sm:p-8">
+      <div className="panel spot p-6 sm:p-8">
         <p className="eyebrow">Email</p>
         <p className="mt-3 text-[18px] leading-relaxed">The easiest way to reach me is by email:</p>
         <a
           href={`mailto:${profile.email}`}
-          className="mt-2 inline-block break-all text-[clamp(1.2rem,3.4vw,1.75rem)] font-semibold tracking-[-0.01em] underline decoration-ink/25 decoration-1 underline-offset-[6px] transition-colors duration-200 hover:decoration-accent-ink"
+          className="mt-2 inline-block break-all text-[clamp(1.2rem,3.4vw,1.75rem)] font-semibold tracking-[-0.01em] underline decoration-ink/25 decoration-1 underline-offset-[6px] transition-colors duration-200 hover:text-accent-ink hover:decoration-accent-ink"
         >
           {profile.email}
         </a>
@@ -25,7 +25,7 @@ export default function Contact() {
           <button
             type="button"
             onClick={copy}
-            className="inline-flex h-11 items-center gap-1.5 rounded-lg border border-ink/20 px-4 text-[15px] text-ink2 transition-colors duration-200 hover:border-ink/40 hover:text-ink"
+            className="btn-ghost"
           >
             {copied ? <Check size={15} /> : <Copy size={15} />}
             {copied ? 'Copied' : 'Copy address'}

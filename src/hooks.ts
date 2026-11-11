@@ -16,35 +16,6 @@ export function useMediaQuery(query: string) {
 
 export const useReducedMotion = () => useMediaQuery('(prefers-reduced-motion: reduce)')
 
-export type Theme = 'light' | 'dark'
-
-export function useTheme() {
-  const [theme, setTheme] = useState<Theme>(() =>
-    document.documentElement.dataset.theme === 'light' ? 'light' : 'dark',
-  )
-
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme
-    document
-      .querySelector('meta[name="theme-color"]')
-      ?.setAttribute('content', theme === 'light' ? '#f2f1ef' : '#181818')
-  }, [theme])
-
-  const toggle = useCallback(() => {
-    setTheme((current) => {
-      const next = current === 'light' ? 'dark' : 'light'
-      try {
-        localStorage.setItem('theme', next)
-      } catch {
-        // Storage can be unavailable (private mode); the theme still applies for this visit.
-      }
-      return next
-    })
-  }, [])
-
-  return { theme, toggle }
-}
-
 export function useActiveSection(ids: readonly string[]) {
   const [active, setActive] = useState<string | null>(null)
 

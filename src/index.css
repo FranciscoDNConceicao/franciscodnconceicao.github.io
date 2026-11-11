@@ -3,31 +3,18 @@
 @tailwind utilities;
 
 /* ---------- Theme tokens (RGB channels so Tailwind can apply alpha) ---------- */
-/* Charcoal and off-white, with Bit's safety orange as the one accent.
-   `accent` is the fill for buttons; `accent-ink` is the orange used as text (4.5:1 or better). */
-:root,
-:root[data-theme='dark'] {
+/* Always dark, like a blueprint: deep navy paper, pale blue-white lines, one bright blue accent.
+   `accent` is the fill for buttons; `accent-ink` is the blue used as text (4.5:1 or better). */
+:root {
   color-scheme: dark;
-  --bg: 24 24 24;
-  --surface: 32 32 32;
-  --ink: 240 240 238;
-  --ink-2: 168 168 166;
-  --ink-3: 132 132 130;
-  --accent: 242 107 15;
-  --accent-ink: 255 138 61;
-  --on-accent: 24 24 24;
-}
-
-:root[data-theme='light'] {
-  color-scheme: light;
-  --bg: 242 241 239;
-  --surface: 250 250 249;
-  --ink: 22 22 22;
-  --ink-2: 84 84 82;
-  --ink-3: 106 106 104;
-  --accent: 194 65 12;
-  --accent-ink: 185 61 11;
-  --on-accent: 255 255 255;
+  --bg: 9 25 49;
+  --surface: 14 35 66;
+  --ink: 232 241 255;
+  --ink-2: 170 194 228;
+  --ink-3: 128 156 196;
+  --accent: 64 156 255;
+  --accent-ink: 120 188 255;
+  --on-accent: 7 20 40;
 }
 
 @layer base {
@@ -70,7 +57,7 @@
 
 @layer components {
   .page {
-    @apply mx-auto w-full max-w-page px-5 sm:px-8 lg:px-14;
+    @apply mx-auto w-full max-w-page px-6 sm:px-12 lg:px-16 xl:px-24;
   }
 
   .hairline {
@@ -78,21 +65,48 @@
   }
 
   .btn-primary {
-    @apply inline-flex h-11 items-center gap-2 rounded-lg bg-accent px-4 text-[15px] font-medium text-on-accent transition-[opacity,transform] duration-200 hover:opacity-90 active:scale-[0.98];
+    @apply inline-flex h-11 items-center gap-2 rounded-lg bg-accent px-4 text-[15px] font-medium text-on-accent transition-[background-color,box-shadow,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-accent-ink hover:shadow-[0_10px_28px_-10px_rgb(var(--accent)/0.85)] active:translate-y-0 active:scale-[0.98];
+  }
+
+  .btn-primary svg {
+    @apply transition-transform duration-200 ease-out;
+  }
+
+  .btn-primary:hover svg {
+    transform: translateY(2px);
+  }
+
+  .btn-ghost {
+    @apply inline-flex h-11 items-center gap-1.5 rounded-lg border border-ink/20 px-4 text-[15px] text-ink2 transition-[border-color,color,background-color,transform] duration-200 ease-out hover:-translate-y-0.5 hover:border-accent-ink/60 hover:bg-accent/10 hover:text-ink active:translate-y-0;
   }
 
   /* Plain text links with an underline that is always there, like in a document. */
   .text-link {
-    @apply text-ink underline decoration-ink/30 decoration-1 underline-offset-4 transition-colors duration-200 hover:decoration-accent-ink;
+    @apply text-ink underline decoration-ink/30 decoration-1 underline-offset-4 transition-[color,text-decoration-color,text-underline-offset] duration-200 hover:text-accent-ink hover:decoration-accent-ink hover:underline-offset-[6px];
   }
 
   /* A boxed card on the drawing: hairline border over a slightly lifted surface. */
   .panel {
-    @apply rounded-[4px] border border-ink/15 bg-surface/70;
+    @apply rounded-[4px] border border-ink/15 bg-surface/70 transition-[border-color,box-shadow,transform] duration-300 ease-out hover:border-accent-ink/45 hover:shadow-[0_24px_60px_-30px_rgb(var(--accent)/0.55)];
   }
 
   .chip {
-    @apply inline-flex h-7 items-center rounded-[3px] border border-ink/15 bg-bg/60 px-2.5 font-mono text-[12.5px] text-ink2;
+    @apply inline-flex h-7 cursor-default items-center rounded-[3px] border border-ink/15 bg-bg/60 px-2.5 font-mono text-[12.5px] text-ink2 transition-[border-color,color,background-color,transform] duration-200 ease-out hover:-translate-y-0.5 hover:border-accent-ink/60 hover:bg-accent/15 hover:text-ink;
+  }
+
+  /* A cell in a spec table: tints and lights its label when hovered. */
+  .spec-cell {
+    @apply transition-colors duration-200 hover:bg-surface;
+  }
+
+  .spec-cell dt,
+  .spec-cell > div:first-child {
+    @apply transition-colors duration-200;
+  }
+
+  .spec-cell:hover dt,
+  .spec-cell:hover > div:first-child {
+    @apply text-accent-ink;
   }
 
   .eyebrow {
@@ -101,18 +115,105 @@
 }
 
 /* ---------- Technical drawing ---------- */
-/* Engineering graph paper: a 24px minor grid with a stronger line every 120px. */
+/* Engineering graph paper: a 24px minor grid with a stronger line every 120px.
+   `--grid` is the line colour, so the same grid can be drawn faint (paper) or bright (under the cursor). */
 .graph-paper {
+  --grid: var(--ink);
   background-image:
-    linear-gradient(to right, rgb(var(--ink) / 0.055) 1px, transparent 1px),
-    linear-gradient(to bottom, rgb(var(--ink) / 0.055) 1px, transparent 1px),
-    linear-gradient(to right, rgb(var(--ink) / 0.025) 1px, transparent 1px),
-    linear-gradient(to bottom, rgb(var(--ink) / 0.025) 1px, transparent 1px);
+    linear-gradient(to right, rgb(var(--grid) / 0.075) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(var(--grid) / 0.075) 1px, transparent 1px),
+    linear-gradient(to right, rgb(var(--grid) / 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(var(--grid) / 0.035) 1px, transparent 1px);
   background-size:
     120px 120px,
     120px 120px,
     24px 24px,
     24px 24px;
+}
+
+/* The patch of grid that lights up around the cursor. */
+.graph-paper.is-lit {
+  --grid: var(--accent-ink);
+  background-image:
+    linear-gradient(to right, rgb(var(--grid) / 0.6) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(var(--grid) / 0.6) 1px, transparent 1px),
+    linear-gradient(to right, rgb(var(--grid) / 0.3) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(var(--grid) / 0.3) 1px, transparent 1px);
+  -webkit-mask-image: radial-gradient(closest-side, #000 0%, rgb(0 0 0 / 0.5) 45%, transparent 100%);
+  mask-image: radial-gradient(closest-side, #000 0%, rgb(0 0 0 / 0.5) 45%, transparent 100%);
+}
+
+/* A soft vignette so the sheet reads like a lit blueprint, brighter in the middle. */
+.blueprint-vignette {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgb(var(--accent) / 0.10), transparent 70%),
+    radial-gradient(ellipse 120% 90% at 50% 50%, transparent 55%, rgb(0 0 0 / 0.35) 100%);
+}
+
+/* The click ring: a compass circle drawn out from where you clicked. */
+@keyframes blueprint-ring {
+  from {
+    transform: translate(-50%, -50%) scale(0.2);
+    opacity: 0.9;
+  }
+  to {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0;
+  }
+}
+
+.blueprint-ring {
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  border: 1px solid rgb(var(--accent-ink) / 0.8);
+  border-radius: 9999px;
+  animation: blueprint-ring 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.blueprint-ring::before,
+.blueprint-ring::after {
+  content: '';
+  position: absolute;
+  background: rgb(var(--accent-ink) / 0.8);
+}
+
+.blueprint-ring::before {
+  left: 50%;
+  top: -8px;
+  bottom: -8px;
+  width: 1px;
+}
+
+.blueprint-ring::after {
+  top: 50%;
+  left: -8px;
+  right: -8px;
+  height: 1px;
+}
+
+/* Cards light up where the cursor is over them. Set --spot-x / --spot-y on the element. */
+.spot {
+  position: relative;
+}
+
+.spot::after {
+  content: '';
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  background: radial-gradient(
+    320px circle at var(--spot-x, 50%) var(--spot-y, 50%),
+    rgb(var(--accent) / 0.13),
+    transparent 70%
+  );
+  transition: opacity 0.3s ease;
+}
+
+.spot:hover::after {
+  opacity: 1;
 }
 
 /* Line drawings keep hairline strokes at any size. */
@@ -186,6 +287,12 @@
   height: 16%;
   border-color: #7cf4ff;
   filter: drop-shadow(0 0 4px rgb(124 244 255 / 0.6));
+}
+
+@keyframes scroll-cue {
+  to {
+    transform: translateY(300%);
+  }
 }
 
 /* ---------- Reduced motion ---------- */

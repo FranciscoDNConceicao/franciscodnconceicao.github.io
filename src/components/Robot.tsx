@@ -25,7 +25,7 @@ interface Props {
 const SHOULDER: Point = { x: 130, y: 222 }
 const UPPER = 100
 const FORE = 86
-const { lens: LENS, orangeLight: ORANGE_LIGHT, orange: ORANGE, steel: STEEL } = BIT
+const { lens: LENS, bodyLight: BODY_LIGHT, body: BODY, steel: STEEL } = BIT
 const DEG = 180 / Math.PI
 
 const solve = (target: Point) => solveArm(SHOULDER, UPPER, FORE, target, 'up')
@@ -259,17 +259,17 @@ export default function Robot({ onScan, scanning, lookAt }: Props) {
           aria-hidden="true"
         >
           <defs>
-            <linearGradient id="arm-orange" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stopColor={ORANGE_LIGHT} />
-              <stop offset="1" stopColor={ORANGE} />
+            <linearGradient id="arm-body" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stopColor={BODY_LIGHT} />
+              <stop offset="1" stopColor={BODY} />
             </linearGradient>
             <linearGradient id="arm-steel" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stopColor="#45454b" />
-              <stop offset="1" stopColor="#1d1d20" />
+              <stop offset="0" stopColor="#3e5274" />
+              <stop offset="1" stopColor="#142035" />
             </linearGradient>
             <pattern id="arm-hazard" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-              <rect width="6" height="12" fill="#f5b400" />
-              <rect x="6" width="6" height="12" fill="#1b1b1d" />
+              <rect width="6" height="12" fill="#d8e8ff" />
+              <rect x="6" width="6" height="12" fill="#13203a" />
             </pattern>
             <linearGradient ref={beamGradientRef} id="arm-beam" gradientUnits="userSpaceOnUse">
               <stop offset="0" stopColor={LENS} stopOpacity="0.55" />
@@ -296,35 +296,35 @@ export default function Robot({ onScan, scanning, lookAt }: Props) {
           <rect x="60" y="272" width="140" height="18" rx="3" fill="url(#arm-hazard)" stroke={STEEL} strokeWidth="2" />
           <path d="M92 272 L168 272 L158 240 L102 240 Z" fill="url(#arm-steel)" />
           <circle className="arm-led" cx="130" cy="257" r="3.5" fill={LENS} filter="url(#arm-glow)" />
-          <rect x="94" y="230" width="72" height="13" rx="5" fill="url(#arm-orange)" />
+          <rect x="94" y="230" width="72" height="13" rx="5" fill="url(#arm-body)" />
 
           {/* Upper arm, drawn along +x from the shoulder */}
           <g ref={upperRef}>
-            <rect x="-15" y="-15" width={UPPER + 30} height="30" rx="15" fill="url(#arm-orange)" />
+            <rect x="-15" y="-15" width={UPPER + 30} height="30" rx="15" fill="url(#arm-body)" />
             <path d={`M10 -8 L${UPPER - 10} -8`} stroke={STEEL} strokeWidth="3" strokeLinecap="round" opacity="0.55" />
             <circle cx={UPPER / 2} cy="5" r="2" fill={STEEL} opacity="0.6" />
           </g>
 
           {/* Forearm, drawn along +x from the elbow */}
           <g ref={foreRef}>
-            <rect x="-11" y="-11" width={FORE + 22} height="22" rx="11" fill="url(#arm-orange)" />
+            <rect x="-11" y="-11" width={FORE + 22} height="22" rx="11" fill="url(#arm-body)" />
             <path d={`M8 -5 L${FORE - 8} -5`} stroke={STEEL} strokeWidth="2.5" strokeLinecap="round" opacity="0.55" />
           </g>
 
           {/* Joint caps */}
-          <circle cx={SHOULDER.x} cy={SHOULDER.y} r="18" fill="url(#arm-steel)" stroke="#55555c" strokeWidth="2" />
-          <circle cx={SHOULDER.x} cy={SHOULDER.y} r="6" fill="#55555c" />
+          <circle cx={SHOULDER.x} cy={SHOULDER.y} r="18" fill="url(#arm-steel)" stroke="#5a7096" strokeWidth="2" />
+          <circle cx={SHOULDER.x} cy={SHOULDER.y} r="6" fill="#5a7096" />
           <g ref={elbowRef}>
-            <circle r="13" fill="url(#arm-steel)" stroke="#55555c" strokeWidth="2" />
-            <circle r="4.5" fill="#55555c" />
+            <circle r="13" fill="url(#arm-steel)" stroke="#5a7096" strokeWidth="2" />
+            <circle r="4.5" fill="#5a7096" />
           </g>
 
           {/* Camera head on the wrist, drawn along +x */}
           <g ref={headRef}>
-            <circle r="9" fill="url(#arm-steel)" stroke="#55555c" strokeWidth="2" />
+            <circle r="9" fill="url(#arm-steel)" stroke="#5a7096" strokeWidth="2" />
             <rect x="6" y="-12" width="30" height="24" rx="6" fill="url(#arm-steel)" />
-            <rect x="12" y="-16" width="10" height="5" rx="2" fill={ORANGE} />
-            <circle cx="38" cy="0" r="10" fill="#0e0e10" stroke="#55555c" strokeWidth="1.5" />
+            <rect x="12" y="-16" width="10" height="5" rx="2" fill={BODY} />
+            <circle cx="38" cy="0" r="10" fill="#08111f" stroke="#5a7096" strokeWidth="1.5" />
             <circle ref={lensRef} cx="38" cy="0" r="6" fill={LENS} filter="url(#arm-glow)" />
           </g>
         </svg>
