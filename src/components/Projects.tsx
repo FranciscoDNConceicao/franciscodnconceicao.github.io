@@ -128,10 +128,10 @@ export default function Projects() {
           media={
             <img
               src={stockFinance.image}
-              alt="Stock Finance dashboard with a price chart, account balances and market news"
+              alt="Stock Finance dashboard with market breadth, a stock heatmap, portfolio balances and market news"
               loading="lazy"
               width={1600}
-              height={770}
+              height={789}
               className="absolute inset-0 h-full w-full object-cover object-left-top"
             />
           }
